@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#102820">
+<meta name="description" content="Lukulu Academy Student Hub development preview with lessons, practice quizzes and an interactive DAW lab.">
+<title>Lukulu Academy | Student Hub & DAW Lab</title>
+<style>
+:root{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#203328;background:#f4f7f3;--ink:#152b20;--green:#1e7750;--bright:#bdf273;--pale:#edf5e8;--line:#dfe9de;--muted:#6b7d71}
+*{box-sizing:border-box}
+body{margin:0}
+button,input,select{font:inherit}
+button{cursor:pointer}
+button:disabled{cursor:default;opacity:.55}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #e6b33c;outline-offset:3px}
+a{color:inherit}
+button{transition:filter .15s,background .15s}
+button:hover:not(:disabled){filter:brightness(.97)}
+h1,h2,h3,p{margin-top:0}
+h1{font-size:clamp(30px,3.2vw,46px);line-height:1.11;letter-spacing:-1.5px;margin-bottom:13px}
+h2{font-size:clamp(21px,2.2vw,27px);letter-spacing:-.6px;margin-bottom:8px}
+p{line-height:1.55;color:var(--muted)}
+small{color:var(--muted)}
+.shell{display:grid;grid-template-columns:244px minmax(0,1fr);min-height:100vh}
+.sidebar{background:#10291e;color:#f4fff2;padding:29px 18px 20px;display:flex;flex-direction:column;gap:25px;position:sticky;top:0;max-height:100vh;overflow:auto}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;padding:0 10px}
+.brand-mark{width:37px;height:37px;border:1px solid #82ae8b;border-radius:12px;display:grid;place-items:center;font-size:20px;font-weight:950;color:var(--bright)}
+.brand strong{font-size:17px;letter-spacing:.8px}
+.brand span{font-size:10px;letter-spacing:2.2px;color:#a8c3b1;display:block;font-weight:750}
+.sidebar-caption{font-size:10px;letter-spacing:2px;color:#8aa795;font-weight:800;margin:0 12px 10px;text-transform:uppercase}
+.side-nav{display:grid;gap:6px}
+.side-nav button{border:0;display:flex;align-items:center;gap:12px;text-align:left;border-radius:12px;padding:13px 14px;background:transparent;color:#c3d4c8;font-weight:660;width:100%}
+.side-nav button[aria-current="page"]{background:#31583c;color:#f6fff4}
+.navglyph{font-size:19px;width:23px;text-align:center}
+.side-spacer{flex:1}
+.side-tip{padding:17px;border-radius:15px;background:#1a3a29;border:1px solid #335945}
+.side-tip strong{font-size:13px}
+.side-tip p{color:#b3c9b9;font-size:12px;margin:8px 0 0}
+.side-bottom{border-top:1px solid #335040;padding-top:18px;display:flex;gap:10px;align-items:center}
+.avatar{height:37px;width:37px;display:grid;place-items:center;border-radius:12px;background:#d5eba9;color:#24482d;font-weight:900}
+.side-bottom small{display:block;color:#a0b6a6;font-size:11px}
+.main{min-width:0}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:18px;border-bottom:1px solid var(--line);padding:16px clamp(18px,3vw,42px);background:#ffffffdc}
+.breadcrumb{color:#87968a;font-size:12px;font-weight:700;letter-spacing:.3px}
+.breadcrumb strong{color:#314f3c}
+.top-actions{display:flex;align-items:center;gap:11px}
+.top-actions a{text-decoration:none;background:#fff;border:1px solid #d4e1d4;border-radius:20px;padding:8px 13px;font-size:12px;font-weight:750}
+.demo-pill{border-radius:20px;padding:9px 12px;background:#e6f2dc;color:#3d6e36;font-size:11px;font-weight:800;white-space:nowrap}
+.content{max-width:1460px;margin:auto;padding:clamp(19px,3vw,42px)}
+.screen[hidden],.lab-panel[hidden],#lessonDetail[hidden]{display:none!important}
+.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--green);font-weight:850;margin-bottom:10px}
+.heading-row{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin-bottom:23px;flex-wrap:wrap}
+.heading-row p{margin-bottom:0;max-width:660px}
+.primary,.outline,.linkbtn,.tbutton{border-radius:12px;padding:11px 17px;font-weight:760;border:1px solid transparent}
+.primary{background:#206e48;color:#fff}
+.outline{background:white;border-color:#cdddcf;color:#214734}
+.linkbtn{background:#eff6ed;color:#296b49}
+.hero{position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) 195px;gap:20px;align-items:center;background:linear-gradient(116deg,#103d2a,#28734c);color:white;border-radius:23px;padding:clamp(22px,3.5vw,38px);margin-bottom:24px}
+.hero:before{content:"";position:absolute;right:-65px;top:-135px;width:350px;height:350px;border:1px solid #ffffff32;border-radius:50%;box-shadow:0 0 0 37px #ffffff08,0 0 0 85px #ffffff06}
+.hero p{color:#d6e9d7;max-width:520px;margin-bottom:22px}
+.hero h1{position:relative;max-width:580px}
+.hero .eyebrow{color:#c8eea2}
+.hero .primary{background:var(--bright);color:#1c3c2a}
+.progress-dial{z-index:1;margin:auto;display:grid;place-items:center;width:148px;height:148px;border-radius:50%;background:conic-gradient(#c4f47c 0deg,#ffffff38 0deg);position:relative}
+.progress-dial:before{content:"";position:absolute;inset:13px;background:#1f5b40;border-radius:50%}
+.progress-dial div{z-index:1;text-align:center}
+.progress-dial strong{display:block;font-size:36px}
+.progress-dial small{color:#d3e6d8}
+.stat-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:26px}
+.card{background:white;border:1px solid #e2ebe1;border-radius:17px;padding:22px;box-shadow:0 5px 20px #1f4b2a05}
+.stat .tag{color:#718e73;font-size:11px;font-weight:800;letter-spacing:1.2px}
+.stat strong{font-size:30px;display:block;margin:10px 0 3px}
+.stat small{font-size:12px}
+.split{display:grid;grid-template-columns:1.3fr .82fr;gap:18px}
+.section-title{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:4px 0 13px}
+.section-title h2{margin:0}
+.section-title button{background:none;border:none;color:#29754f;font-weight:760}
+.course{display:grid;grid-template-columns:58px 1fr auto;align-items:center;gap:14px;padding:17px 0;border-bottom:1px solid #edf1ec}
+.course:last-child{border-bottom:none}
+.course-icon{display:grid;place-items:center;height:53px;width:53px;border-radius:14px;background:#e6f4df;color:#275c38;font-size:25px}
+.course-icon.alt{background:#f0ebde;color:#806438}
+.course h3{font-size:15px;margin-bottom:4px}
+.course p{font-size:12px;margin-bottom:0}
+.tiny-progress{background:#e7ede5;height:6px;border-radius:9px;overflow:hidden;margin-top:9px}
+.tiny-progress>div{height:100%;background:#2c955c;transition:width .15s}
+.mini-action{border:1px solid #d4e2d4;background:white;padding:9px 12px;border-radius:10px;color:#28543a;font-weight:750;white-space:nowrap;font-size:12px}
+.task-card{background:#f2f8eb;border:1px solid #dceccd;border-radius:16px;padding:20px}
+.task-card h3{font-size:18px;margin:7px 0}
+.task-card p{font-size:13px}
+.task-card .eyebrow{font-size:10px}
+.checkline{display:flex;gap:10px;align-items:center;margin-top:14px;font-size:13px;color:#54705d}
+.checkline b{color:#408b51}
+.track-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:20px 0}
+.track-card{background:white;border:1px solid var(--line);padding:22px;border-radius:17px}
+.track-card .eyebrow{margin-bottom:7px}
+.track-card p{font-size:13px}
+.track-card button{margin-top:7px}
+.lesson-item{display:grid;grid-template-columns:49px minmax(0,1fr) auto;align-items:center;gap:13px;padding:16px 0;border-bottom:1px solid #e8eee7}
+.lesson-item:last-child{border:0}
+.lesson-number{width:42px;height:42px;display:grid;place-items:center;border-radius:13px;background:#edf5eb;color:#377f52;font-weight:900}
+.lesson-item h3{margin:0 0 3px;font-size:14px}
+.lesson-item p{font-size:12px;margin:0}
+.lesson-actions{display:flex;gap:7px;align-items:center}
+.done{background:#e8f5e6;color:#397448;border-radius:20px;padding:6px 10px;font-size:11px;font-weight:800}
+.lesson-detail{background:#edf6e9;border:1px solid #cfe1cd;border-radius:15px;padding:21px;margin-top:20px}
+.lesson-detail p{color:#445d4b}
+.lesson-detail h3{font-size:21px}
+.quiz-card{margin-top:19px}
+.question{border-top:1px solid #e4ece3;padding:16px 0}
+.question label{display:block;padding:6px 0;font-size:14px;color:#3d5342}
+.question input{margin-right:7px}
+.notice{margin:12px 0;color:#4f7a4d;font-size:13px;min-height:18px}
+.lab-shell{background:#10201c;color:#e5f3e8;border-radius:22px;border:1px solid #243b31;overflow:hidden;box-shadow:0 25px 60px #18362b1c}
+.lab-top{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;padding:22px 24px;background:linear-gradient(100deg,#18342a,#173026)}
+.lab-top h2{color:#f4fff4;margin:3px 0;font-size:24px}
+.lab-top p{color:#9dbaa8;margin:0;font-size:12px}
+.lab-top .eyebrow{color:#b7ea78}
+.lab-controls{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.lab-controls input[type="number"]{background:#14231d;color:#f0fff2;border:1px solid #42614a;border-radius:9px;padding:8px;width:75px}
+.lab-controls label{font-size:12px;color:#cde0d0;font-weight:750}
+.lab-controls .primary{background:#c7f47d;color:#1e3724}
+.lab-controls .outline{border-color:#385d44;color:#e1efe3;background:#1c3528}
+.lab-nav{display:flex;gap:5px;overflow:auto;padding:9px 20px 0;background:#142920;border-bottom:1px solid #345044}
+.lab-nav button{background:none;border:none;border-bottom:3px solid transparent;color:#a5c0af;padding:13px 17px;font-weight:750;white-space:nowrap}
+.lab-nav button[aria-selected="true"]{color:#d7fca1;border-bottom-color:#b9f178}
+.lab-body{padding:22px 23px 25px}
+.lab-subtitle{display:flex;justify-content:space-between;gap:10px;align-items:start;flex-wrap:wrap;margin-bottom:16px}
+.lab-subtitle h3{font-size:18px;color:#f3fff1;margin:0 0 4px}
+.lab-subtitle p{font-size:12px;color:#a5b9a9;margin:0}
+.tool-row{display:flex;gap:8px;flex-wrap:wrap}
+.tool-row button,.tool-row label{border:1px solid #405c4a;background:#1c3b2c;color:#e6f9e5;border-radius:9px;padding:9px 12px;font-size:12px;font-weight:750}
+.tool-row label{display:flex;align-items:center;gap:6px}
+.tool-row input{accent-color:#c7f47d}
+.timeline{overflow-x:auto;border:1px solid #345044;border-radius:13px;padding:12px;background:#0f1f18}
+.rack-row{display:grid;grid-template-columns:122px repeat(16,32px);gap:5px;align-items:center;margin:7px 0;width:max-content}
+.rack-row.header{font-size:10px;color:#829d8b;margin-bottom:11px}
+.rack-label{font-size:12px;font-weight:800;padding-left:4px;color:#d8f4de}
+.hit{border:1px solid #355843;border-radius:6px;height:33px;width:32px;background:#1a3326;padding:0}
+.hit:nth-of-type(4n+2){border-left-color:#6d8e69}
+.hit.on{background:#b5eb73;box-shadow:inset 0 -6px #8fbe56}
+.hit.playing{outline:2px solid #f5c464;outline-offset:1px}
+.notehit.on{background:#77d6a5;box-shadow:inset 0 -5px #48ab75}
+.lab-foot{border-top:1px solid #304739;padding-top:15px;margin-top:17px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.lab-foot .status{color:#bad6bb;font-size:12px;flex:1}
+.lab-foot button{background:#244333;color:#e9f6ea;border:1px solid #436248;border-radius:9px;padding:9px 12px;font-size:12px;font-weight:740}
+.playlist{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:10px}
+.arrange-slot{border:1px solid #3c5f47;background:#183327;border-radius:12px;padding:17px}
+.arrange-slot small{color:#92b49c}
+.arrange-slot label{display:block;margin:8px 0;color:#e2f6df;font-size:13px;font-weight:750}
+.arrange-slot select{width:100%;background:#224632;border:1px solid #4c7052;border-radius:8px;color:white;padding:9px;font-size:12px}
+.mixers{display:grid;grid-template-columns:repeat(4,minmax(140px,1fr));gap:11px}
+.mixer{background:#193326;border:1px solid #385e43;padding:17px;border-radius:12px}
+.mixer strong{display:block;font-size:13px}
+.mixer input[type=range]{width:100%;accent-color:#b8ee77}
+.mixer button{border:1px solid #50715a;border-radius:8px;background:#274a36;color:#ddf1de;padding:7px 12px}
+.mixer button[aria-pressed=true]{background:#704432;color:#ffe4d5}
+.mixer p{font-size:12px;color:#9db5a1;margin:10px 0}
+.guide{background:#ebf5e4;padding:19px 23px;border-radius:16px;margin-top:18px;border:1px solid #d8e8d2}
+.guide h3{font-size:17px}
+.guide p{font-size:13px;margin-bottom:12px}
+.guide .primary{font-size:12px}
+.work-card{max-width:850px}
+.work-card p{font-size:14px}
+.work-card button{margin-right:8px;margin-top:10px}
+.sr-only{position:absolute!important;height:1px!important;width:1px!important;overflow:hidden!important;clip:rect(1px,1px,1px,1px)!important;white-space:nowrap!important}
+#patternFile{display:none}
+@media(max-width:1120px){.split{grid-template-columns:1fr}.stat-grid{gap:10px}.course{grid-template-columns:52px 1fr auto}}
+@media(max-width:880px){.shell{grid-template-columns:1fr}.sidebar{position:static;max-height:none;padding:14px 16px;gap:9px}.brand{margin:0 0 5px}.side-nav{display:flex;overflow:auto}.side-nav button{white-space:nowrap;width:auto;padding:9px 13px}.side-spacer,.side-tip,.side-bottom,.sidebar-caption{display:none}.hero{grid-template-columns:1fr 125px}.progress-dial{width:110px;height:110px}.progress-dial:before{inset:11px}.progress-dial strong{font-size:26px}}
+@media(max-width:600px){.content{padding:20px 14px}.topbar{padding:12px 14px}.breadcrumb{font-size:11px}.demo-pill{display:none}.hero{grid-template-columns:1fr;padding:22px}.hero h1{font-size:31px}.progress-dial{display:none}.stat-grid{grid-template-columns:1fr 1fr}.stat-grid .stat:last-child{grid-column:1/-1}.stat{padding:16px}.stat strong{font-size:26px}.track-grid{grid-template-columns:1fr}.course{grid-template-columns:40px 1fr}.course .mini-action{grid-column:2;justify-self:start}.course-icon{width:40px;height:40px}.lesson-item{grid-template-columns:38px 1fr}.lesson-actions{grid-column:2}.lab-top,.lab-body{padding:17px}.lab-nav{padding-left:9px}.playlist,.mixers{grid-template-columns:repeat(2,minmax(0,1fr))}.heading-row{margin-bottom:14px}.top-actions a{padding:8px 10px}.lesson-detail{padding:16px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="shell">
+<aside class="sidebar" aria-label="Student navigation">
+ <a class="brand" href="./index.html" aria-label="Lukulu Academy public website"><span class="brand-mark" aria-hidden="true">L</span><div><strong>LUKULU</strong><span>ACADEMY</span></div></a>
+ <div><div class="sidebar-caption">Learning workspace</div>
+ <nav class="side-nav" aria-label="Student Hub">
+  <button type="button" data-nav="overview" aria-current="page"><span class="navglyph" aria-hidden="true">⌂</span> Overview</button>
+  <button type="button" data-nav="learn"><span class="navglyph" aria-hidden="true">▤</span> My learning</button>
+  <button type="button" data-nav="lab"><span class="navglyph" aria-hidden="true">▥</span> DAW lab</button>
+  <button type="button" data-nav="work"><span class="navglyph" aria-hidden="true">▣</span> My work</button>
+ </nav></div>
+ <div class="side-spacer"></div>
+ <div class="side-tip"><strong>Small steps. Big sound.</strong><p>Keep your projects moving: practise one new music skill every day.</p></div>
+ <div class="side-bottom"><div class="avatar">D</div><div><strong style="font-size:13px">Demo student</strong><small>Preview access only</small></div></div>
+</aside>
+<div class="main">
+<header class="topbar"><div class="breadcrumb">ACADEMY <span aria-hidden="true">/</span> <strong>STUDENT HUB</strong></div><div class="top-actions"><span class="demo-pill">● DEMO MODE</span><a href="./index.html">Public website ↗</a></div></header>
+<main class="content">
+<section class="screen" data-screen="overview">
+ <div class="heading-row"><div><div class="eyebrow">Your learning dashboard</div><h1>Good to see you, creator.</h1><p>Everything you need to learn, practise and build your next sound, all in one place.</p></div></div>
+ <div class="hero">
+  <div><div class="eyebrow">Your journey starts here</div><h1>Keep the rhythm.<br>Keep growing.</h1><p>Pick up where you left off, practise in the DAW Lab, and keep moving towards your music goals.</p><button class="primary" data-go="learn">Continue learning</button> <button class="outline" data-go="lab" style="background:#ffffff19;border-color:#7bac89;color:white">Open DAW lab</button></div>
+  <div class="progress-dial" id="progressDial" aria-label="Course completion progress"><div><strong id="dialValue">0%</strong><small>completed</small></div></div>
+ </div>
+ <div class="stat-grid">
+  <div class="card stat"><div class="tag">LESSONS COMPLETED</div><strong id="overviewCompleted">0 / 4</strong><small>Music production and business</small></div>
+  <div class="card stat"><div class="tag">LATEST QUIZ</div><strong id="overviewQuiz">—</strong><small>Two-question knowledge check</small></div>
+  <div class="card stat"><div class="tag">DAW PRACTICE</div><strong id="overviewSteps">0</strong><small>Active drum steps in your pattern</small></div>
+ </div>
+ <div class="split">
+  <div><div class="section-title"><h2>Learning tracks</h2><button data-go="learn">View all lessons →</button></div><div class="card">
+    <div class="course"><div class="course-icon">♫</div><div><h3>FL Studio music production</h3><p>Rhythm, arrangement and hands-on practice</p><div class="tiny-progress"><div id="productionBar" style="width:0%"></div></div></div><button class="mini-action" data-go="learn">Continue</button></div>
+    <div class="course"><div class="course-icon alt">◎</div><div><h3>Music business foundations</h3><p>Credits, rights and releasing music</p><div class="tiny-progress"><div id="businessBar" style="width:0%"></div></div><button class="mini-action" data-go="learn">Explore</button></div>
+  </div></div>
+  <div><div class="section-title"><h2>Your next step</h2></div><div class="task-card"><div class="eyebrow">Practical assignment</div><h3>Build your first 16-step beat</h3><p>Open the Channel Rack, create a kick and clap pattern, and save your work. Start with the Afro House preset if you need inspiration.</p><button class="primary" data-go="lab">Open practice lab</button><div class="checkline"><b>✓</b> Free to try in demo mode</div></div></div>
+ </div>
+</section>
+<section class="screen" data-screen="learn" hidden>
+ <div class="heading-row"><div><div class="eyebrow">Learn at your own pace</div><h1>My learning</h1><p>Two learning tracks, practical mini-lessons and a simple quiz. All learning content below is illustrative demo material.</p></div><button class="outline" data-go="lab">Go to DAW lab ↗</button></div>
+ <div class="track-grid"><div class="track-card"><div class="eyebrow">Track 01</div><h2>Music Production</h2><p>FL Studio concepts: getting started, rhythm, melody and arrangement.</p><span class="done" id="prodCount">0 of 3 complete</span></div><div class="track-card"><div class="eyebrow">Track 02</div><h2>Music Business</h2><p>Learn about songwriter credits, rights, distribution and preparing a release.</p><span class="done" id="businessCount">0 of 1 complete</span></div></div>
+ <div class="card"><div class="section-title"><h2>Course lessons</h2><small>Select a lesson to read and practise</small></div><div id="lessonList"></div>
+ <div class="lesson-detail" id="lessonDetail" hidden tabindex="-1"><div class="eyebrow">Lesson activity</div><h3 id="detailTitle"></h3><p id="detailBody"></p><strong>Try this</strong><p id="detailTask"></p><button class="primary" id="completeLesson">Mark lesson complete</button> <button class="outline" id="closeLesson">Close</button></div></div>
+ <div class="card quiz-card"><div class="eyebrow">Knowledge check</div><h2>Quick practice quiz</h2><p>Answer the two questions to check your understanding. Your score is saved on this browser only.</p>
+  <form id="quizForm"><div class="question"><strong>1. What does BPM mean?</strong><label><input type="radio" name="q1" value="yes"> Beats per minute</label><label><input type="radio" name="q1" value="no"> Bars per melody</label></div><div class="question"><strong>2. What does a step sequencer help you create?</strong><label><input type="radio" name="q2" value="no"> A royalty agreement</label><label><input type="radio" name="q2" value="yes"> Patterns of musical notes or hits</label></div><button class="primary" type="submit">Submit answers</button><p class="notice" id="quizResult" role="status"></p></form>
+ </div>
+</section>
+<section class="screen" data-screen="lab" hidden>
+ <div class="heading-row"><div><div class="eyebrow">Practice studio / version 0.2</div><h1>Lukulu DAW Lab</h1><p>A beginner-friendly music workstation with drums, piano-roll practice, song sections and basic mixing. It is not FL Studio itself.</p></div></div>
+ <div class="lab-shell">
+  <div class="lab-top"><div><div class="eyebrow">Beat-making workspace</div><h2>My first track <small style="color:#91ae97;font-weight:400;font-size:12px">● browser project</small></h2><p>Tap steps to create your beat. Use headphones at a comfortable volume.</p></div>
+   <div class="lab-controls"><label for="tempo">BPM</label><input id="tempo" type="number" min="60" max="180" step="1" value="110"><button id="play" class="primary">▶ Play</button><button id="stop" class="outline">■ Stop</button></div>
+  </div>
+  <div class="lab-nav" role="tablist" aria-label="DAW lab views"><button id="tab-rack" role="tab" aria-controls="panel-rack" aria-selected="true" data-lab-tab="rack">Channel Rack</button><button id="tab-piano" role="tab" aria-controls="panel-piano" aria-selected="false" data-lab-tab="piano">Piano Roll</button><button id="tab-playlist" role="tab" aria-controls="panel-playlist" aria-selected="false" data-lab-tab="playlist">Playlist</button><button id="tab-mixer" role="tab" aria-controls="panel-mixer" aria-selected="false" data-lab-tab="mixer">Mixer</button></div>
+  <div class="lab-body">
+    <div class="lab-panel" id="panel-rack" role="tabpanel" aria-labelledby="tab-rack">
+     <div class="lab-subtitle"><div><h3>Channel Rack</h3><p>One bar · 16 steps · Four drum tracks</p></div><div class="tool-row"><button data-preset="afro">Afro House</button><button data-preset="house">Four-on-floor</button><button id="clearDrums">Clear</button></div></div>
+     <div class="timeline" id="rackGrid" aria-label="Sixteen-step drum sequencer"></div>
+    </div>
+    <div class="lab-panel" id="panel-piano" role="tabpanel" aria-labelledby="tab-piano" hidden>
+     <div class="lab-subtitle"><div><h3>Piano Roll</h3><p>Eight notes · 16 steps · Tap to create a simple melody</p></div><div class="tool-row"><button id="clearPiano">Clear melody</button></div></div>
+     <div class="timeline" id="pianoGrid" aria-label="Simple piano roll"></div>
+    </div>
+    <div class="lab-panel" id="panel-playlist" role="tabpanel" aria-labelledby="tab-playlist" hidden>
+     <div class="lab-subtitle"><div><h3>Playlist</h3><p>Arrange four bars. Enable arrangement playback, then press Play.</p></div><div class="tool-row"><label><input id="arrangeMode" type="checkbox"> Play arrangement</label></div></div>
+     <div class="playlist" id="playlist"></div><p style="color:#a5bea9;font-size:12px;margin:16px 0 0">Intro: lighter drums · Groove: full pattern · Breakdown: melody and hi-hat · Outro: kick and clap.</p>
+    </div>
+    <div class="lab-panel" id="panel-mixer" role="tabpanel" aria-labelledby="tab-mixer" hidden>
+     <div class="lab-subtitle"><div><h3>Mixer</h3><p>Adjust each drum channel's level or mute it.</p></div></div><div class="mixers" id="mixer"></div>
+    </div>
+    <div class="lab-foot"><div class="status" id="labStatus" role="status">Ready. Press Play to hear your pattern.</div><button id="saveLab">Save to browser</button><button id="exportLab">Export project JSON</button><button id="importLab">Import project</button><input id="patternFile" type="file" accept="application/json,.json"></div>
+  </div>
+ </div>
+ <div class="guide"><div class="eyebrow">Lesson M02 · Rhythm &amp; drums</div><h3>Practice challenge: make an Afro House groove</h3><p>Create a drum pattern with at least eight active steps, try the piano roll, and export the project. This is a practice task, not an automatically graded assignment.</p><button class="primary" id="markRhythm">Mark M02 lesson complete</button> <span id="challengeStatus" class="notice"></span></div>
+</section>
+<section class="screen" data-screen="work" hidden>
+ <div class="heading-row"><div><div class="eyebrow">Your saved practice</div><h1>My work</h1><p>Review and export progress. This preview stores data in your current browser—not a real student account.</p></div></div>
+ <div class="card work-card"><h2>Demo project and progress</h2><p id="savedSummary"></p><p>Export a JSON backup to move your sample work to another browser. For safety, do not treat browser storage as permanent cloud storage.</p><button class="primary" id="exportProgress">Export student demo data</button><button class="outline" id="resetDemo">Reset demo data</button><p class="notice" id="workStatus" role="status"></p></div>
+</section>
+</main>
+</div></div>
+<script>
+"use strict";
+const LEARN_KEY="lukulu-academy-demo-v1", LAB_KEY="lukulu-academy-lab-v2";
+const LESSONS=[
+{id:"M01",title:"Getting started with FL Studio",description:"Explore the Channel Rack, Playlist and transport.",body:"FL Studio uses the Channel Rack to create patterns, the Playlist to build an arrangement and the transport to control playback. Begin with a tempo and save your project versions as you work.",task:"Visit the DAW Lab, set the tempo to 110 BPM and identify the four drum tracks."},
+{id:"M02",title:"Rhythm and drums",description:"Build your first four-on-floor and Afro House rhythm.",body:"In 4/4 time, each bar has four beats. A 16-step sequencer divides a bar into sixteen equal parts. Try a kick on steps 1, 5, 9 and 13, and a clap on steps 5 and 13.",task:"Open the Channel Rack, load the Afro House preset and add at least two steps before exporting your beat."},
+{id:"M03",title:"Melody and arrangement",description:"Shape musical phrases into short song sections.",body:"Arrangement gives a song structure. An intro introduces elements, a groove drives the track, a breakdown creates space and an outro leads the listener out.",task:"In the DAW Lab, add three piano-roll notes and set the four Playlist sections."},
+{id:"B01",title:"Music business foundations",description:"Learn about rights, credits and release preparation.",body:"Songwriting and master recordings can involve different rights. Prepare correct artist, producer and songwriter credits, agreed splits, cover artwork and release details before distribution.",task:"Write a simple release checklist: song title, artist, credits, splits, cover, release date and distributor."}
+];
+const TRACKS=["Kick","Clap","Hi-hat","Percussion"];
+const NOTES=[["C4",261.63],["B3",246.94],["A3",220],["G3",196],["F3",174.61],["E3",164.81],["D3",146.83],["C3",130.81]];
+const $=id=>document.getElementById(id);
+const deepCopy=x=>JSON.parse(JSON.stringify(x));
+const defaultPattern=()=>TRACKS.map((_,i)=>Array.from({length:16},(_,j)=>i===0?j%4===0:i===1?j%8===4:i===2?j%2===0:false));
+const defaultMelody=()=>NOTES.map(()=>Array(16).fill(false));
+const defaults=()=>({tempo:110,pattern:defaultPattern(),melody:defaultMelody(),sections:["Intro","Groove","Breakdown","Outro"],arrangeMode:false,levels:[85,72,48,52],muted:[false,false,false,false]});
+const validMatrix=(x,rows)=>Array.isArray(x)&&x.length===rows&&x.every(r=>Array.isArray(r)&&r.length===16&&r.every(v=>typeof v==="boolean"));
+const boundedTempo=v=>Number.isFinite(Number(v))?Math.max(60,Math.min(180,Math.round(Number(v)))):110;
+const readJSON=k=>{try{return JSON.parse(localStorage.getItem(k)||"null")}catch{return null}};
+let learn=readJSON(LEARN_KEY)||{};
+if(!learn||typeof learn!=="object"||Array.isArray(learn))learn={};
+let lab=defaults();
+const storedLab=readJSON(LAB_KEY);
+if(storedLab&&validMatrix(storedLab.pattern,4)){
+ lab.pattern=deepCopy(storedLab.pattern);
+ if(validMatrix(storedLab.melody,8))lab.melody=deepCopy(storedLab.melody);
+ lab.tempo=boundedTempo(storedLab.tempo);
+ if(Array.isArray(storedLab.sections)&&storedLab.sections.length===4&&storedLab.sections.every(s=>["Intro","Groove","Breakdown","Outro"].includes(s)))lab.sections=storedLab.sections.slice();
+ lab.arrangeMode=storedLab.arrangeMode===true;
+ if(Array.isArray(storedLab.levels)&&storedLab.levels.length===4)lab.levels=storedLab.levels.map(v=>Number.isFinite(Number(v))?Math.max(0,Math.min(100,Math.round(Number(v)))):70);
+ if(Array.isArray(storedLab.muted)&&storedLab.muted.length===4)lab.muted=storedLab.muted.map(Boolean);
+}else{
+ const legacy=readJSON(LEARN_KEY+"-pattern");
+ if(legacy&&validMatrix(legacy.pattern,4)){lab.pattern=deepCopy(legacy.pattern);lab.tempo=boundedTempo(legacy.bpm)}
+}
+let audio=null,timer=null,tickIndex=0,selectedLesson=null,currentView="overview";
+function msg(text){$("labStatus").textContent=text}
+function saveLearning(){try{localStorage.setItem(LEARN_KEY,JSON.stringify(learn));return true}catch{showStorageWarning();return false}}
+function saveLab(silent=false){try{localStorage.setItem(LAB_KEY,JSON.stringify(lab));if(!silent)msg("Project saved in this browser.");return true}catch{showStorageWarning();if(!silent)msg("Your browser prevented saving. Export a project JSON backup.");return false}}
+function showStorageWarning(){$("workStatus").textContent="Browser storage is blocked. Data may be lost when this page closes."; }
+function completedCount(){return LESSONS.filter(l=>learn[l.id]===true).length}
+function activeSteps(){return lab.pattern.reduce((total,row)=>total+row.filter(Boolean).length,0)}
+function renderOverview(){
+ const n=completedCount(),pct=Math.round(100*n/LESSONS.length);
+ $("overviewCompleted").textContent=n+" / "+LESSONS.length;
+ $("overviewQuiz").textContent=Number.isInteger(learn.quiz)?learn.quiz+" / 2":"—";
+ $("overviewSteps").textContent=String(activeSteps());
+ $("dialValue").textContent=pct+"%";
+ $("progressDial").style.background="conic-gradient(#c4f47c 0 "+(pct*3.6)+"deg,#ffffff38 "+(pct*3.6)+"deg 360deg)";
+ $("progressDial").setAttribute("aria-label",pct+" percent of demo lessons completed");
+ $("productionBar").style.width=Math.round(LESSONS.slice(0,3).filter(l=>learn[l.id]).length/3*100)+"%";
+ $("businessBar").style.width=learn.B01?"100%":"0%";
+ $("prodCount").textContent=LESSONS.slice(0,3).filter(l=>learn[l.id]).length+" of 3 complete";
+ $("businessCount").textContent=(learn.B01?"1":"0")+" of 1 complete";
+ $("savedSummary").textContent=n+" of 4 demo lessons completed. Quiz: "+(Number.isInteger(learn.quiz)?learn.quiz+"/2":"not submitted")+". Drum pattern: "+activeSteps()+" active steps.";
+ $("challengeStatus").textContent=activeSteps()>=8?"Your drum pattern has at least eight active steps.":"Add at least eight drum steps to try this challenge.";
+}
+function renderLessons(){
+ $("lessonList").innerHTML=LESSONS.map(l=>'<div class="lesson-item"><div class="lesson-number">'+l.id+'</div><div><h3>'+l.title+'</h3><p>'+l.description+'</p></div><div class="lesson-actions">'+(learn[l.id]?'<span class="done">✓ Done</span>':'')+'<button class="mini-action" data-lesson="'+l.id+'">Open lesson</button></div></div>').join("");
+ if(selectedLesson){$("completeLesson").disabled=learn[selectedLesson]===true;$("completeLesson").textContent=learn[selectedLesson]?"Completed":"Mark lesson complete"}
+}
+function openLesson(id){const l=LESSONS.find(x=>x.id===id);if(!l)return;selectedLesson=id;$("detailTitle").textContent=l.title;$("detailBody").textContent=l.body;$("detailTask").textContent=l.task;$("lessonDetail").hidden=false;renderLessons();$("lessonDetail").focus()}
+function completeLesson(id){if(!LESSONS.some(l=>l.id===id))return;learn[id]=true;saveLearning();renderLessons();renderOverview();$("detailTask").textContent="Well done. The demo has marked this lesson as complete."}
+function changeView(view,updateHash=true){
+ const target=["overview","learn","lab","work"].includes(view)?view:"overview";
+ if(currentView==="lab"&&target!=="lab")stopAudio();
+ currentView=target;
+ document.querySelectorAll("[data-screen]").forEach(s=>s.hidden=s.dataset.screen!==target);
+ document.querySelectorAll("[data-nav]").forEach(b=>{if(b.dataset.nav===target)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")});
+ if(updateHash&&location.hash!=="#"+target)history.replaceState(null,"","#"+target);
+ if(target==="lab")renderStudio();
+ renderOverview();
+ window.scrollTo(0,0);
+}
+function renderRack(){
+ const header='<div class="rack-row header"><span>CHANNEL</span>'+Array.from({length:16},(_,i)=>'<span style="text-align:center">'+(i+1)+'</span>').join("")+'</div>';
+ $("rackGrid").innerHTML=header+TRACKS.map((name,r)=>'<div class="rack-row"><span class="rack-label">'+name+'</span>'+lab.pattern[r].map((on,i)=>'<button type="button" class="hit'+(on?" on":"")+'" data-drum="'+r+'" data-step="'+i+'" aria-label="'+name+' step '+(i+1)+'" aria-pressed="'+on+'"></button>').join("")+'</div>').join("");
+}
+function renderPiano(){
+ const header='<div class="rack-row header"><span>NOTE</span>'+Array.from({length:16},(_,i)=>'<span style="text-align:center">'+(i+1)+'</span>').join("")+'</div>';
+ $("pianoGrid").innerHTML=header+NOTES.map((entry,r)=>'<div class="rack-row"><span class="rack-label">'+entry[0]+'</span>'+lab.melody[r].map((on,i)=>'<button type="button" class="hit notehit'+(on?" on":"")+'" data-note="'+r+'" data-step="'+i+'" aria-label="'+entry[0]+' note step '+(i+1)+'" aria-pressed="'+on+'"></button>').join("")+'</div>').join("");
+}
+function renderPlaylist(){
+ const names=["Intro","Groove","Breakdown","Outro"];
+ $("playlist").innerHTML=lab.sections.map((v,i)=>'<div class="arrange-slot"><small>BAR '+(i+1)+'</small><label for="section'+i+'">Section</label><select data-section="'+i+'" id="section'+i+'">'+names.map(n=>'<option value="'+n+'"'+(n===v?" selected":"")+'>'+n+'</option>').join("")+'</select></div>').join("");
+ $("arrangeMode").checked=lab.arrangeMode;
+}
+function renderMixer(){
+ $("mixer").innerHTML=TRACKS.map((t,i)=>'<div class="mixer"><strong>'+t+'</strong><p>Level <span id="vol'+i+'">'+lab.levels[i]+'</span>%</p><label class="sr-only" for="level'+i+'">'+t+' volume</label><input id="level'+i+'" type="range" min="0" max="100" value="'+lab.levels[i]+'" data-level="'+i+'"><p><button type="button" data-mute="'+i+'" aria-pressed="'+lab.muted[i]+'">'+(lab.muted[i]?"Unmute":"Mute")+'</button></p></div>').join("");
+}
+function renderStudio(){$("tempo").value=lab.tempo;renderRack();renderPiano();renderPlaylist();renderMixer();renderOverview()}
+function switchLabTab(name){
+ document.querySelectorAll("[data-lab-tab]").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.labTab===name)));
+ document.querySelectorAll(".lab-panel").forEach(p=>p.hidden=p.id!=="panel-"+name);
+}
+function preset(kind){
+ stopAudio();
+ lab.pattern=TRACKS.map((_,r)=>Array.from({length:16},(_,i)=>kind==="house"?
+ (r===0&&i%4===0)||(r===1&&i%8===4)||(r===2&&i%2===0):
+ (r===0&&[0,4,7,8,12,14].includes(i))||(r===1&&[4,12].includes(i))||(r===2&&i%2===0)||(r===3&&[3,11,15].includes(i))));
+ saveLab(true);renderRack();renderOverview();msg((kind==="house"?"Four-on-floor":"Afro House")+" preset loaded.");
+}
+function clearPlaying(){document.querySelectorAll(".hit.playing").forEach(b=>b.classList.remove("playing"))}
+function stopAudio(){
+ if(timer!==null){clearInterval(timer);timer=null}
+ clearPlaying();$("play").textContent="▶ Play";tickIndex=0;
+}
+function tone(frequency,duration,volume,type,at){
+ if(!audio||volume<=0)return;
+ const osc=audio.createOscillator(),gain=audio.createGain();
+ osc.type=type;osc.frequency.setValueAtTime(frequency,at);
+ osc.connect(gain);gain.connect(audio.destination);
+ gain.gain.setValueAtTime(.0001,at);gain.gain.exponentialRampToValueAtTime(Math.max(.0002,volume),at+.006);gain.gain.exponentialRampToValueAtTime(.0001,at+duration);
+ osc.start(at);osc.stop(at+duration+.02);
+}
+function drumSound(r,now){
+ if(lab.muted[r])return;
+ const volume=(lab.levels[r]/100)*.15;
+ if(r===0){tone(140,.16,volume,"sine",now);return}
+ if(r===1){tone(220,.10,volume*.7,"triangle",now);return}
+ if(r===2){tone(740,.055,volume*.23,"square",now);return}
+ tone(340,.085,volume*.55,"triangle",now);
+}
+function allowDrum(r,section){
+ if(section==="Groove")return true;
+ if(section==="Intro")return r===0||r===2;
+ if(section==="Breakdown")return r===2;
+ return r===0||r===1;
+}
+function tick(){
+ const step=tickIndex%16,bar=Math.floor(tickIndex/16)%4;
+ const section=lab.arrangeMode?lab.sections[bar]:"Groove";
+ clearPlaying();
+ document.querySelectorAll('[data-step="'+step+'"]').forEach(b=>b.classList.add("playing"));
+ const now=audio.currentTime+.015;
+ lab.pattern.forEach((row,r)=>{if(row[step]&&allowDrum(r,section))drumSound(r,now)});
+ if(section!=="Intro"&&section!=="Outro")lab.melody.forEach((row,r)=>{if(row[step])tone(NOTES[r][1],.19,.055,"sine",now)});
+ tickIndex=(tickIndex+1)%(lab.arrangeMode?64:16);
+}
+async function playAudio(){
+ if(timer!==null)return;
+ const Ctx=window.AudioContext||window.webkitAudioContext;
+ if(!Ctx){msg("Web Audio is not supported in this browser.");return}
+ try{
+  audio=audio||new Ctx();await audio.resume();
+  if(audio.state!=="running"){msg("Audio is blocked. Tap Play again after enabling sound.");return}
+  lab.tempo=boundedTempo($("tempo").value);$("tempo").value=lab.tempo;saveLab(true);
+  tickIndex=0;tick();timer=setInterval(tick,60000/lab.tempo/4);$("play").textContent="● Playing";
+  msg(lab.arrangeMode?"Playing four-bar arrangement.":"Playing the current 16-step pattern.");
+ }catch{msg("Audio could not start. Check browser sound permissions.")}
+}
+function downloadJSON(filename,value){
+ const blob=new Blob([JSON.stringify(value,null,2)],{type:"application/json"});
+ const url=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();
+ setTimeout(()=>URL.revokeObjectURL(url),2000);
+}
+function exportLab(){downloadJSON("lukulu-academy-daw-project.json",{format:"lukulu-academy-lab-v2",...deepCopy(lab)});msg("DAW project exported as JSON.")}
+async function importLab(file){
+ if(!file)return;
+ if(file.size>100000){msg("File too large. Maximum project size is 100 KB.");return}
+ try{
+  const obj=JSON.parse(await file.text());
+  if(!validMatrix(obj.pattern,4)){msg("Invalid project: expected four drum tracks of sixteen true/false steps.");return}
+  stopAudio();let next=defaults();
+  next.pattern=deepCopy(obj.pattern);
+  if(validMatrix(obj.melody,8))next.melody=deepCopy(obj.melody);
+  next.tempo=boundedTempo(obj.tempo??obj.bpm);
+  if(Array.isArray(obj.sections)&&obj.sections.length===4&&obj.sections.every(s=>["Intro","Groove","Breakdown","Outro"].includes(s)))next.sections=obj.sections.slice();
+  next.arrangeMode=obj.arrangeMode===true;
+  if(Array.isArray(obj.levels)&&obj.levels.length===4)next.levels=obj.levels.map(v=>Number.isFinite(Number(v))?Math.max(0,Math.min(100,Math.round(Number(v)))):70);
+  if(Array.isArray(obj.muted)&&obj.muted.length===4)next.muted=obj.muted.map(Boolean);
+  lab=next;saveLab(true);renderStudio();msg("Project imported and saved in this browser.");
+ }catch{msg("Could not read the project JSON file.")}
+}
+function resetDemo(){
+ if(!window.confirm("Reset all Lukulu Academy demo lessons, quiz and DAW work saved in this browser? Export a backup first if needed."))return;
+ stopAudio();learn={};lab=defaults();selectedLesson=null;$("lessonDetail").hidden=true;$("quizForm").reset();$("quizResult").textContent="";
+ try{localStorage.removeItem(LEARN_KEY);localStorage.removeItem(LEARN_KEY+"-pattern");localStorage.removeItem(LAB_KEY)}catch{showStorageWarning()}
+ renderLessons();renderStudio();renderOverview();$("workStatus").textContent="Demo learning progress and DAW project reset.";
+}
+document.addEventListener("click",e=>{
+ const go=e.target.closest("[data-go],[data-nav]");
+ if(go){changeView(go.dataset.go||go.dataset.nav);return}
+ const l=e.target.closest("[data-lesson]");
+ if(l){openLesson(l.dataset.lesson);return}
+ const t=e.target.closest("[data-lab-tab]");
+ if(t){switchLabTab(t.dataset.labTab);return}
+ const d=e.target.closest("[data-drum]");
+ if(d){const r=Number(d.dataset.drum),s=Number(d.dataset.step);lab.pattern[r][s]=!lab.pattern[r][s];d.classList.toggle("on",lab.pattern[r][s]);d.setAttribute("aria-pressed",String(lab.pattern[r][s]));saveLab(true);renderOverview();return}
+ const n=e.target.closest("[data-note]");
+ if(n){const r=Number(n.dataset.note),s=Number(n.dataset.step);lab.melody[r][s]=!lab.melody[r][s];n.classList.toggle("on",lab.melody[r][s]);n.setAttribute("aria-pressed",String(lab.melody[r][s]));saveLab(true);return}
+ const p=e.target.closest("[data-preset]");
+ if(p){preset(p.dataset.preset);return}
+ const m=e.target.closest("[data-mute]");
+ if(m){let i=Number(m.dataset.mute);lab.muted[i]=!lab.muted[i];m.setAttribute("aria-pressed",String(lab.muted[i]));m.textContent=lab.muted[i]?"Unmute":"Mute";saveLab(true)}
+});
+document.addEventListener("input",e=>{
+ const el=e.target.closest("[data-level]");
+ if(el){const i=Number(el.dataset.level);lab.levels[i]=Math.max(0,Math.min(100,Number(el.value)||0));$("vol"+i).textContent=lab.levels[i];saveLab(true)}
+});
+document.addEventListener("change",e=>{
+ const s=e.target.closest("[data-section]");
+ if(s){lab.sections[Number(s.dataset.section)]=s.value;saveLab(true)}
+ if(e.target.id==="arrangeMode"){lab.arrangeMode=e.target.checked;stopAudio();saveLab(true)}
+ if(e.target.id==="tempo"){lab.tempo=boundedTempo(e.target.value);e.target.value=lab.tempo;if(timer!==null){stopAudio();msg("Tempo updated. Press Play to restart.")}saveLab(true)}
+});
+$("play").addEventListener("click",playAudio);
+$("stop").addEventListener("click",()=>{stopAudio();msg("Playback stopped.")});
+$("clearDrums").addEventListener("click",()=>{stopAudio();lab.pattern=TRACKS.map(()=>Array(16).fill(false));saveLab(true);renderRack();renderOverview();msg("Drum steps cleared.")});
+$("clearPiano").addEventListener("click",()=>{stopAudio();lab.melody=defaultMelody();saveLab(true);renderPiano();msg("Piano Roll cleared.")});
+$("saveLab").addEventListener("click",()=>saveLab());
+$("exportLab").addEventListener("click",exportLab);
+$("importLab").addEventListener("click",()=>$("patternFile").click());
+$("patternFile").addEventListener("change",async e=>{await importLab(e.target.files?.[0]);e.target.value=""});
+$("completeLesson").addEventListener("click",()=>{if(selectedLesson)completeLesson(selectedLesson)});
+$("closeLesson").addEventListener("click",()=>{$("lessonDetail").hidden=true;selectedLesson=null});
+$("quizForm").addEventListener("submit",e=>{
+ e.preventDefault();const data=new FormData(e.currentTarget);
+ if(!data.has("q1")||!data.has("q2")){$("quizResult").textContent="Please answer both questions.";return}
+ learn.quiz=Number(data.get("q1")==="yes")+Number(data.get("q2")==="yes");
+ saveLearning();renderOverview();$("quizResult").textContent="You scored "+learn.quiz+" out of 2. "+(learn.quiz===2?"Great work!":"Review the lessons and try again.");
+});
+$("markRhythm").addEventListener("click",()=>{if(activeSteps()<8){msg("Add at least eight drum steps to finish the practice activity.");changeView("lab");switchLabTab("rack");return}completeLesson("M02");renderOverview();$("challengeStatus").textContent="M02 complete. Your demo progress was updated.";});
+$("exportProgress").addEventListener("click",()=>{downloadJSON("lukulu-student-demo-backup.json",{format:"lukulu-academy-student-backup-v1",learning:learn,lab});$("workStatus").textContent="Demo backup exported."});
+$("resetDemo").addEventListener("click",resetDemo);
+document.addEventListener("visibilitychange",()=>{if(document.hidden)stopAudio()});
+window.addEventListener("hashchange",()=>changeView(location.hash.slice(1),false));
+window.addEventListener("pagehide",stopAudio);
+renderLessons();renderStudio();renderOverview();changeView(location.hash.slice(1)||"overview",false);
+</script>
+</body>
+</html>
