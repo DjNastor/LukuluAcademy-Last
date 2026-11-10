@@ -294,7 +294,7 @@ small{color:var(--muted)}
 </section>
 <section class="screen" data-screen="work" hidden>
  <div class="heading-row"><div><div class="eyebrow">Your saved practice</div><h1>My work</h1><p>Review and export progress. This preview stores data in your current browser—not a real student account.</p></div></div>
- <div class="card work-card"><h2>Demo project and progress</h2><p id="savedSummary"></p><p>Export a JSON backup to move your sample work to another browser. For safety, do not treat browser storage as permanent cloud storage.</p><button class="primary" id="exportProgress">Export student demo data</button><button class="outline" id="resetDemo">Reset demo data</button><p class="notice" id="workStatus" role="status"></p></div>
+ <div class="card work-card"><h2>Demo project and progress</h2><p id="savedSummary"></p><p>Export a JSON backup of your sample progress for safekeeping. The DAW Lab can import exported DAW projects; importing this complete student backup is not supported yet. Browser storage is not permanent cloud storage.</p><button class="primary" id="exportProgress">Export student demo data</button><button class="outline" id="resetDemo">Reset demo data</button><p class="notice" id="workStatus" role="status"></p></div>
 </section>
 </main>
 </div></div>
@@ -304,7 +304,7 @@ const LEARN_KEY="lukulu-academy-demo-v1", LAB_KEY="lukulu-academy-lab-v2";
 const LESSONS=[
 {id:"M01",title:"Getting started with FL Studio",description:"Explore the Channel Rack, Playlist and transport.",body:"FL Studio uses the Channel Rack to create patterns, the Playlist to build an arrangement and the transport to control playback. Begin with a tempo and save your project versions as you work.",task:"Visit the DAW Lab, set the tempo to 110 BPM and identify the four drum tracks."},
 {id:"M02",title:"Rhythm and drums",description:"Build your first four-on-floor and Afro House rhythm.",body:"In 4/4 time, each bar has four beats. A 16-step sequencer divides a bar into sixteen equal parts. Try a kick on steps 1, 5, 9 and 13, and a clap on steps 5 and 13.",task:"Open the Channel Rack, load the Afro House preset and add at least two steps before exporting your beat."},
-{id:"M03",title:"Melody and arrangement",description:"Shape musical phrases into short song sections.",body:"Arrangement gives a song structure. An intro introduces elements, a groove drives the track, a breakdown creates space and an outro leads the listener out.",task:"In the DAW Lab, add three piano-roll notes and set the four Playlist sections."},
+{id:"M03",title:"Melody and arrangement",description:"Shape musical phrases into short song sections.",body:"Arrangement gives a song structure. An intro introduces elements, a groove drives the track, a breakdown creates space and an outro leads the listener out.",task:"In the DAW Lab, add three piano-roll notes and arrange drum and melody clips across eight bars."},
 {id:"B01",title:"Music business foundations",description:"Learn about rights, credits and release preparation.",body:"Songwriting and master recordings can involve different rights. Prepare correct artist, producer and songwriter credits, agreed splits, cover artwork and release details before distribution.",task:"Write a simple release checklist: song title, artist, credits, splits, cover, release date and distributor."}
 ];
 const TRACKS=["Kick","Clap","Hi-hat","Percussion"];
@@ -467,6 +467,7 @@ function cycleClip(lane,bar){
  const options=["",...PATTERN_IDS],curr=options.indexOf(lab.clips[lane][bar]);
  lab.clips[lane][bar]=options[(curr+1)%options.length];
  stopAudio();saveLab(true);renderPlaylist();
+ document.querySelector?.('.clip-slot[data-clip-lane="'+lane+'"][data-bar="'+bar+'"]')?.focus();
  msg((lane==="drums"?"Drums":"Melody")+" bar "+(bar+1)+": "+(lab.clips[lane][bar]||"empty")+" clip.");
 }
 function renderMixer(){
