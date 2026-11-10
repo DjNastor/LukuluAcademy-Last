@@ -1,0 +1,24 @@
+﻿name: Bug report
+description: Report a problem in the simulator foundation
+title: 'bug: '
+labels: [bug]
+body:
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Keep this beginner-friendly and specific.
+    validations:
+      required: true

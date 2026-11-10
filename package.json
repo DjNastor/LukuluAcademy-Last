@@ -1,0 +1,48 @@
+{
+  "name": "lukulu-academy-consolidated",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "npm run build:lab && vite build",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.api.json",
+    "check": "npm run lint && npm run typecheck && npm run build && npm run smoke",
+    "preview": "vite preview",
+    "smoke": "node scripts/smoke-check.mjs",
+    "test:student": "node scripts/test-student-access.mjs",
+    "build:lab": "npm --prefix apps/simulator run build -- --base=/student-lab/ && node scripts/bundle-lab.mjs",
+    "setup": "npm ci && npm --prefix apps/simulator ci"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.13.3",
+    "@supabase/supabase-js": "^2.110.7",
+    "framer-motion": "^11.5.4",
+    "lucide-react": "0.522.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "7.18.1",
+    "stripe": "^22.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.18",
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^6.0.1",
+    "autoprefixer": "latest",
+    "eslint": "9.39.2",
+    "eslint-plugin-react-hooks": "7.0.1",
+    "eslint-plugin-react-refresh": "0.5.2",
+    "postcss": "latest",
+    "tailwindcss": "3.4.17",
+    "typescript": "^5.5.4",
+    "vite": "^8.1.5",
+    "@eslint/js": "9.39.2",
+    "globals": "16.5.0",
+    "typescript-eslint": "8.65.0"
+  },
+  "engines": {
+    "node": "24.x"
+  }
+}

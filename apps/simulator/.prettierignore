@@ -1,0 +1,7 @@
+node_modules
+dist
+coverage
+package-lock.json
+FL Studio.htm
+FL Studio_files
+fl.studio
