@@ -215,6 +215,18 @@ small{color:var(--muted)}
 .lab-nav button[aria-selected="true"]{color:#d6fda2;background:#ffffff08}
 @media(max-width:600px){.pattern-toolbar{padding:12px 15px;gap:9px}.pattern-toolbar-label{width:100%}.pattern-help{margin-left:0;width:100%}.transport-pos{order:5}.rack-row{grid-template-columns:113px repeat(16,32px)}.note-row{grid-template-columns:113px repeat(16,32px)}.key-label{min-width:113px}.hit{width:32px}.lab-top{gap:14px}}
 
+
+/* DAW Lab v0.4: piano note lengths and direct Playlist editing */
+.daw-tool-label{display:flex;align-items:center;gap:7px;color:#d8ebd2;font-size:12px;font-weight:700;white-space:nowrap}
+.daw-tool-label select{font-size:12px;color:#eaf8d9;background:#243d2c;border:1px solid #577d5a;border-radius:7px;padding:9px 26px 9px 9px}
+.playlist-editor{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:12px 0 15px;padding:12px;border:1px solid #3f5943;border-radius:11px;background:#1b3024}
+.playlist-editor .pattern-tool{min-height:36px}
+.notehit.note-head{background:#80d6b5;color:#103929;box-shadow:inset 0 -5px #53a989;z-index:1;position:relative;border-radius:5px 2px 2px 5px;font-weight:900;font-size:10px}
+.notehit.note-head span{pointer-events:none}
+.notehit.sustain{background:#326f5b;border-color:#77b9a2;border-left-color:transparent;border-radius:0 2px 2px 0}
+.notehit.note-head+ .notehit.sustain{border-radius:1px}
+.notehit.sustain:hover{filter:brightness(1.3)}
+@media(max-width:650px){.daw-tool-label{flex-wrap:wrap}.playlist-editor{padding:9px}.lab-subtitle .tool-row{flex-wrap:wrap}}
 </style>
 </head>
 <body>
@@ -277,12 +289,12 @@ small{color:var(--muted)}
      <div class="timeline" id="rackGrid" aria-label="Sixteen-step drum sequencer"></div>
     </div>
     <div class="lab-panel" id="panel-piano" role="tabpanel" aria-labelledby="tab-piano" hidden>
-     <div class="lab-subtitle"><div><h3>Piano Roll <span class="mini-hint">Pattern <span id="pianoPattern">A</span></span></h3><p>Chromatic octave C3–C4 · 16 steps per bar · Tap notes to edit</p></div><div class="tool-row"><button id="clearPiano">Clear melody</button></div></div>
+     <div class="lab-subtitle"><div><h3>Piano Roll <span class="mini-hint">Pattern <span id="pianoPattern">A</span></span></h3><p>Chromatic octave C3–C4 · 16 steps per bar · Choose a note length, then tap to draw. Shift-click an existing note to resize it.</p></div><div class="tool-row"><label class="daw-tool-label" for="noteLength">Note length <select id="noteLength" aria-label="New note duration in sequencer steps"><option value="1">1 step</option><option value="2">2 steps</option><option value="4" selected>4 steps</option><option value="8">8 steps</option></select></label><button id="clearPiano">Clear melody</button></div></div>
      <div class="timeline" id="pianoGrid" aria-label="Simple piano roll"></div>
     </div>
     <div class="lab-panel" id="panel-playlist" role="tabpanel" aria-labelledby="tab-playlist" hidden>
-     <div class="lab-subtitle"><div><h3>Playlist <span class="mini-hint">8-bar arrangement</span></h3><p>Assign pattern clips to drum and melody tracks. Click a clip to cycle Empty → A → B → C → D; then enable arrangement playback.</p></div><div class="tool-row"><label><input id="arrangeMode" type="checkbox"> Play arrangement</label></div></div>
-     <div class="playlist-scroll"><div class="playlist" id="playlist" aria-label="Eight-bar pattern arrangement"></div></div><p class="arrange-hint">Pattern clips determine what plays in each bar. Use the section dropdowns as labels for the learning activity; they do not automatically change the music.</p>
+     <div class="lab-subtitle"><div><h3>Playlist <span class="mini-hint">8-bar arrangement</span></h3><p>Place different drum and melody clips. Use Draw to insert a selected pattern, Erase to remove, or Cycle to step through options.</p></div><div class="tool-row"><label><input id="arrangeMode" type="checkbox"> Play arrangement</label></div></div>
+     <div class="playlist-editor" aria-label="Playlist editing tools"><label class="daw-tool-label" for="playlistTool">Edit tool <select id="playlistTool"><option value="cycle">Cycle</option><option value="draw" selected>Draw</option><option value="erase">Erase</option></select></label><label class="daw-tool-label" for="playlistPattern">Clip pattern <select id="playlistPattern"><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></label><button type="button" id="copyBars" class="pattern-tool" title="Copy the first four bars to bars five through eight">Duplicate first 4 bars →</button><button type="button" id="clearClips" class="pattern-tool">Clear clips</button></div><div class="playlist-scroll"><div class="playlist" id="playlist" aria-label="Eight-bar pattern arrangement"></div></div><p class="arrange-hint">Pattern clips determine what plays in each bar. Use the section dropdowns as labels for the learning activity; they do not automatically change the music.</p>
     </div>
     <div class="lab-panel" id="panel-mixer" role="tabpanel" aria-labelledby="tab-mixer" hidden>
      <div class="lab-subtitle"><div><h3>Mixer</h3><p>Adjust each drum channel's level or mute it.</p></div></div><div class="mixers" id="mixer"></div>
