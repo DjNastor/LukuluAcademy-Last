@@ -31,9 +31,9 @@
 
 ## Chalkie content generation — current review status
 
-A **ten-slide M02 Afro House rhythm lesson** and **five-question beginner knowledge-check quiz** have been submitted to Chalkie. Their creation calls succeeded, but both were **generating** at the last preview; the content has **not yet been teacher-reviewed or imported into the Student Hub**.
+A **ten-slide M02 Afro House rhythm lesson** and **five-question beginner knowledge-check quiz** have been submitted to Chalkie. Chalkie now reports **completed** for both saved resources (verified from the connected account's resource list on 10 November 2026). The generated content has **not yet been teacher-reviewed or imported into the Student Hub**.
 
-The quiz was created from a matching topic-based brief because the new slide lesson was still generating and could not yet be used as a Chalkie quiz source. Check its five questions and answer key against the completed slides before publication. Keep teacher-owned resource links in private tracking rather than committing them to the public repo.
+The quiz was created from a matching topic-based brief because the new slide lesson was not complete at quiz creation and could not yet be used as a Chalkie quiz source. Check its five questions and answer key against the completed slides before publication. Keep teacher-owned resource links in private tracking rather than committing them to the public repo.
 
 ## TRIGGERcmd Mac sync — exact manual setup
 
