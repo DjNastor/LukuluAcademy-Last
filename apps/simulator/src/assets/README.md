@@ -1,0 +1,1 @@
+/* Placeholder for future original Lukulu Academy visual assets. */

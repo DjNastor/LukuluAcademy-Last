@@ -1,0 +1,26 @@
+﻿name: Feature request
+description: Suggest a new Lukulu DAW simulator capability
+title: 'feat: '
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Learning problem
+      description: What should this help a student learn?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Describe the feature or lesson idea.
+    validations:
+      required: true
+  - type: checkboxes
+    id: boundaries
+    attributes:
+      label: IP boundaries
+      options:
+        - label: This can be built with original Lukulu UI, labels, and assets.
+          required: true
