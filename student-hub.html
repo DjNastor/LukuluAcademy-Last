@@ -308,30 +308,89 @@ const LESSONS=[
 {id:"B01",title:"Music business foundations",description:"Learn about rights, credits and release preparation.",body:"Songwriting and master recordings can involve different rights. Prepare correct artist, producer and songwriter credits, agreed splits, cover artwork and release details before distribution.",task:"Write a simple release checklist: song title, artist, credits, splits, cover, release date and distributor."}
 ];
 const TRACKS=["Kick","Clap","Hi-hat","Percussion"];
-const NOTES=[["C4",261.63],["B3",246.94],["A3",220],["G3",196],["F3",174.61],["E3",164.81],["D3",146.83],["C3",130.81]];
+const NOTES=[
+["C4",261.63],["B3",246.94],["A#3",233.08],["A3",220],
+["G#3",207.65],["G3",196],["F#3",185],["F3",174.61],
+["E3",164.81],["D#3",155.56],["D3",146.83],["C#3",138.59],["C3",130.81]];
+const PATTERN_IDS=["A","B","C","D"];
+const SECTION_OPTIONS=["Intro","Groove","Breakdown","Outro"];
 const $=id=>document.getElementById(id);
 const deepCopy=x=>JSON.parse(JSON.stringify(x));
+const emptyDrums=()=>TRACKS.map(()=>Array(16).fill(false));
 const defaultPattern=()=>TRACKS.map((_,i)=>Array.from({length:16},(_,j)=>i===0?j%4===0:i===1?j%8===4:i===2?j%2===0:false));
 const defaultMelody=()=>NOTES.map(()=>Array(16).fill(false));
-const defaults=()=>({tempo:110,pattern:defaultPattern(),melody:defaultMelody(),sections:["Intro","Groove","Breakdown","Outro"],arrangeMode:false,levels:[85,72,48,52],muted:[false,false,false,false]});
 const validMatrix=(x,rows)=>Array.isArray(x)&&x.length===rows&&x.every(r=>Array.isArray(r)&&r.length===16&&r.every(v=>typeof v==="boolean"));
-const boundedTempo=v=>Number.isFinite(Number(v))?Math.max(60,Math.min(180,Math.round(Number(v)))):110;
+const coerceMelody=m=>{
+ if(validMatrix(m,NOTES.length))return deepCopy(m);
+ const grid=defaultMelody(),legacyRows=[0,1,3,5,7,8,10,12];
+ if(validMatrix(m,8))m.forEach((row,i)=>grid[legacyRows[i]]=row.slice());
+ return grid;
+};
+const boundedTempo=v=>v!==null&&v!==undefined&&v!==""&&Number.isFinite(Number(v))?Math.max(60,Math.min(180,Math.round(Number(v)))):110;
+const defaultBank=()=>Object.fromEntries(PATTERN_IDS.map(id=>[id,{pattern:id==="A"?defaultPattern():emptyDrums(),melody:defaultMelody()}]));
+const defaults=()=>({
+ tempo:110,pattern:defaultPattern(),melody:defaultMelody(),
+ activePattern:"A",patternBank:defaultBank(),
+ sections:["Intro","Intro","Groove","Groove","Groove","Breakdown","Groove","Outro"],
+ clips:{drums:Array(8).fill("A"),melody:["","","A","A","A","A","A",""]},
+ arrangeMode:false,levels:[85,72,48,52],muted:[false,false,false,false]
+});
 const readJSON=k=>{try{return JSON.parse(localStorage.getItem(k)||"null")}catch{return null}};
+const validClips=x=>Array.isArray(x)&&x.length===8&&x.every(id=>id===""||PATTERN_IDS.includes(id));
+function hydrateLab(obj){
+ if(!obj||typeof obj!=="object"||Array.isArray(obj))return null;
+ const hasLegacy=validMatrix(obj.pattern,4),hasBank=obj.patternBank&&typeof obj.patternBank==="object"&&PATTERN_IDS.some(id=>validMatrix(obj.patternBank[id]?.pattern,4));
+ if(!hasLegacy&&!hasBank)return null;
+ const next=defaults();
+ if(hasBank){
+  PATTERN_IDS.forEach(id=>{
+   const p=obj.patternBank[id];
+   if(p&&validMatrix(p.pattern,4))next.patternBank[id]={pattern:deepCopy(p.pattern),melody:coerceMelody(p.melody)};
+  });
+ }else{
+  next.patternBank.A={pattern:deepCopy(obj.pattern),melody:coerceMelody(obj.melody)};
+ }
+ next.activePattern=PATTERN_IDS.includes(obj.activePattern)?obj.activePattern:"A";
+ next.pattern=deepCopy(next.patternBank[next.activePattern].pattern);
+ next.melody=deepCopy(next.patternBank[next.activePattern].melody);
+ next.tempo=boundedTempo(obj.tempo??obj.bpm);
+ if(Array.isArray(obj.sections)&&obj.sections.every(v=>SECTION_OPTIONS.includes(v))){
+  if(obj.sections.length===8)next.sections=obj.sections.slice();
+  else if(obj.sections.length===4)next.sections=obj.sections.flatMap(v=>[v,v]);
+ }
+ if(obj.clips&&validClips(obj.clips.drums)&&validClips(obj.clips.melody)){
+  next.clips={drums:obj.clips.drums.slice(),melody:obj.clips.melody.slice()};
+ }
+ next.arrangeMode=obj.arrangeMode===true;
+ if(Array.isArray(obj.levels)&&obj.levels.length===4)next.levels=obj.levels.map(v=>Number.isFinite(Number(v))?Math.max(0,Math.min(100,Math.round(Number(v)))):70);
+ if(Array.isArray(obj.muted)&&obj.muted.length===4)next.muted=obj.muted.map(Boolean);
+ return next;
+}
 let learn=readJSON(LEARN_KEY)||{};
 if(!learn||typeof learn!=="object"||Array.isArray(learn))learn={};
-let lab=defaults();
-const storedLab=readJSON(LAB_KEY);
-if(storedLab&&validMatrix(storedLab.pattern,4)){
- lab.pattern=deepCopy(storedLab.pattern);
- if(validMatrix(storedLab.melody,8))lab.melody=deepCopy(storedLab.melody);
- lab.tempo=boundedTempo(storedLab.tempo);
- if(Array.isArray(storedLab.sections)&&storedLab.sections.length===4&&storedLab.sections.every(s=>["Intro","Groove","Breakdown","Outro"].includes(s)))lab.sections=storedLab.sections.slice();
- lab.arrangeMode=storedLab.arrangeMode===true;
- if(Array.isArray(storedLab.levels)&&storedLab.levels.length===4)lab.levels=storedLab.levels.map(v=>Number.isFinite(Number(v))?Math.max(0,Math.min(100,Math.round(Number(v)))):70);
- if(Array.isArray(storedLab.muted)&&storedLab.muted.length===4)lab.muted=storedLab.muted.map(Boolean);
-}else{
- const legacy=readJSON(LEARN_KEY+"-pattern");
- if(legacy&&validMatrix(legacy.pattern,4)){lab.pattern=deepCopy(legacy.pattern);lab.tempo=boundedTempo(legacy.bpm)}
+let lab=hydrateLab(readJSON(LAB_KEY))||hydrateLab(readJSON(LEARN_KEY+"-pattern"))||defaults();
+function syncActivePattern(){
+ if(!lab.patternBank||!PATTERN_IDS.includes(lab.activePattern))return;
+ lab.patternBank[lab.activePattern]={pattern:deepCopy(lab.pattern),melody:deepCopy(lab.melody)};
+}
+function choosePattern(id){
+ if(!PATTERN_IDS.includes(id)||id===lab.activePattern)return;
+ stopAudio();syncActivePattern();
+ lab.activePattern=id;lab.pattern=deepCopy(lab.patternBank[id].pattern);lab.melody=deepCopy(lab.patternBank[id].melody);
+ saveLab(true);renderStudio();$("patternStatus").textContent="Pattern "+id+" selected";
+}
+function duplicatePattern(){
+ syncActivePattern();
+ const idx=PATTERN_IDS.indexOf(lab.activePattern),target=PATTERN_IDS[(idx+1)%PATTERN_IDS.length];
+ const previous=lab.patternBank[target];
+ if((previous.pattern.some(row=>row.some(Boolean))||previous.melody.some(row=>row.some(Boolean)))&&!window.confirm("Replace existing Pattern "+target+" with a copy of Pattern "+lab.activePattern+"?"))return;
+ stopAudio();lab.patternBank[target]={pattern:deepCopy(lab.pattern),melody:deepCopy(lab.melody)};
+ lab.activePattern=target;lab.pattern=deepCopy(lab.patternBank[target].pattern);lab.melody=deepCopy(lab.patternBank[target].melody);
+ saveLab(true);renderStudio();$("patternStatus").textContent="Copied to Pattern "+target;
+}
+function clearActivePattern(){
+ if(!window.confirm("Clear all drum and melody steps in Pattern "+lab.activePattern+"?"))return;
+ stopAudio();lab.pattern=emptyDrums();lab.melody=defaultMelody();saveLab(true);renderStudio();$("patternStatus").textContent="Pattern "+lab.activePattern+" cleared";
 }
 let audio=null,timer=null,tickIndex=0,selectedLesson=null,currentView="overview";
 function msg(text){$("labStatus").textContent=text}
