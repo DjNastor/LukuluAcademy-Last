@@ -29,16 +29,38 @@
 
 **Technical linkage:** Use the resulting approved copy/answer scheme to extend `student-hub.html` lessons in GitHub on `develop`. Do not embed third-party private editing URLs or API secrets in the public repository. Preserve existing demo pattern import/export, 13-note Piano Roll, clip Playlist and student progress.
 
-## Optional TRIGGERcmd Mac sync setup
+## Chalkie content generation — current review status
 
-1. On your own Mac, install and sign in to the TRIGGERcmd agent through its official instructions.
-2. Confirm the device appears in the connected account's list.
-3. In TRIGGERcmd, add a command that executes **only** `bash /absolute/verified/path/to/LukuluAcademy-Last/scripts/sync-academy.sh`. The exact local path must be inspected on your Mac, not guessed here.
-4. Keep the command on-demand initially; do not enable frequent background execution until you have tested it with unsaved VS Code buffers.
-5. Test with a clean `develop` branch, then a local edit and a wrong branch. It should update only on the clean verified branch and refuse the unsafe cases.
-6. If remotely invoked, report exit status and actual Git commit. No claimed remote sync until command success is observed.
+A **ten-slide M02 Afro House rhythm lesson** and **five-question beginner knowledge-check quiz** have been submitted to Chalkie. Their creation calls succeeded, but both were **generating** at the last preview; the content has **not yet been teacher-reviewed or imported into the Student Hub**.
 
-**Default:** Existing VS Code task **Academy: Safe Pull from GitHub** is enough for initial development. Its safeguards reject untracked/saved local changes and unrelated remotes.
+The quiz was created from a matching topic-based brief because the new slide lesson was still generating and could not yet be used as a Chalkie quiz source. Check its five questions and answer key against the completed slides before publication. Keep teacher-owned resource links in private tracking rather than committing them to the public repo.
+
+## TRIGGERcmd Mac sync — exact manual setup
+
+**Connection check:** Connected TRIGGERcmd currently says **“No computers found for this user.”** No remote command has been installed or executed.
+
+**Official documentation:** https://www.triggercmd.com/en/ and https://github.com/rvmey/triggercmd-docs/blob/master/Commands.md.
+
+1. In Chrome on the **Intel MacBook**, open the official TRIGGERcmd site and download the **Mac Agent Intel** installer. Check macOS Catalina compatibility before continuing. Install, open the app and sign in with the linked TRIGGERcmd account. A registration token may need entering through the agent; never paste the token into this chat or GitHub.
+2. In **VS Code**, open your actual Git checkout `LukuluAcademy-Last`, save local edits and select the `develop` branch. Run **Terminal → New Terminal** from the repo root.
+3. Verify the safe pull directly first: `bash scripts/sync-academy.sh`. This refuses the wrong remote/branch or local saved changes, and never uses force/reset. If it fails, stop and resolve it before remote configuration.
+4. In that same repo-root terminal, print the exact local command without guessing your home folder:
+
+   ```bash
+   printf '/bin/bash "%s/scripts/sync-academy.sh"\n' "$(pwd -P)"
+   ```
+
+   Copy the resulting one-line command.
+5. In the TRIGGERcmd **GUI Command Editor** on the Mac, add a new command:
+   - **Trigger:** `Lukulu Academy Safe Pull`
+   - **Command:** paste the full one-line command printed in step 4.
+   - **Ground:** **Foreground** (the standard Mac agent, when logged in).
+   - **Allow Parameters:** **off**.
+   - **Voice/MCP Reply:** `{{result}}` when supported, so the response can report the script's result.
+6. Save the command; leave the TRIGGERcmd agent running. Refresh the connected device list here. Only after the Mac and trigger appear can we issue a remote **test** of that specifically named command with no parameters.
+7. Test in three conditions: clean `develop` (safe fast-forward), saved modified file (must refuse) and other branch (must refuse). Do not automatically discard changes, stash, merge divergent history, push, or write into `main`.
+
+**Mac caveat:** TRIGGERcmd's normal Mac agent offers foreground commands; unlike a Windows/Linux background agent it is not intended to run without a logged-in user. Do not confuse this with the repository's separate, optional `launchd` five-minute auto-pull helper. Neither remote option was active at the last check.
 
 ## Teacher review and integration gate
 
