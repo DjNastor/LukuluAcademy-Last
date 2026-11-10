@@ -91,3 +91,7 @@ The storage key `lukulu-academy-lab-v2` is **retained** for compatibility. Older
 - Do not commit passwords, access tokens, student records or payment details.
 - Confirm ZAR course pricing before going live.
 - Keep production enrolment and payment flows separate from demo mode.
+
+## Mac auto-sync and VS Code workflow
+
+Use **Tasks: Run Task → Academy: Safe Pull from GitHub** after saving local edits. The `develop` branch includes optional **Enable Safe Auto-Pull (Mac)** and **Disable Safe Auto-Pull (Mac)** tasks. Enabling requires a clean, valid local checkout and sets up a five-minute login-session macOS job. It is **not active until installed on your Mac**; unsaved editor buffers cannot be detected by Git. See [ChatGPT → VS Code workflow](docs/CHATGPT-VSCODE-WORKFLOW.md).
