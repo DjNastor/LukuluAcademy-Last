@@ -12,22 +12,30 @@ A responsive, single-file **development prototype** combining the Lukulu Academy
 
 Repository: https://github.com/DjNastor/LukuluAcademy-Last
 
-## Updated Student Hub and DAW Lab (development preview)
+## Redesigned Student Hub and DAW Lab — v0.3 prototype
 
-The redesigned, responsive Student Hub is now in **[`student-hub.html`](student-hub.html)**. Open it from the public Academy `index.html` demo buttons or directly in your browser.
+Open **[`student-hub.html`](student-hub.html)** from `index.html` or directly in Chrome / VS Code Live Preview.
 
-- **Overview**: learning progress, quiz results, DAW practice steps and a next-lesson shortcut.
-- **My learning**: four sample lessons, reading tasks and a two-question quiz.
-- **DAW Lab / Channel Rack**: four drum tracks, 16-step buttons, presets and 60–180 BPM playback.
-- **DAW Lab / Piano Roll**: eight pitch rows across 16 steps, with basic synthesized melody playback.
-- **DAW Lab / Playlist**: four bars with selectable Intro / Groove / Breakdown / Outro roles and optional arrangement playback.
-- **DAW Lab / Mixer**: per-track volume and mute.
-- **My work**: export student demo backup or reset local demo data.
-- **Save/Import/Export**: the DAW project can be saved in browser storage and exported/imported as JSON. Existing `lukulu-academy-demo-v1` lesson progress is reused.
+### Student learning
+- Responsive dashboard, learning tracks, four introductory lessons, two-question quiz and demo progress.
+- Browser-local lesson and quiz progress is stored under the original `lukulu-academy-demo-v1` key. This is **not** real student authentication.
 
-**This is an educational proof of concept, not FL Studio or a production LMS.** The original approved logo is not integrated; text branding is used temporarily. Neither payments nor real student authentication are available.
+### FL Studio-inspired practice workspace
+- **Channel Rack:** four drums (kick, clap, hi-hat, percussion), 16 steps per bar, Afro House and four-on-floor presets.
+- **Four editable patterns (A–D):** choose a pattern, edit, duplicate into the next slot (confirmation before overwrite), or clear with confirmation.
+- **Piano Roll:** 13 chromatic pitches from C3 through C4, editable 16-step melody notes and note-key audition.
+- **Playlist:** eight-bar timeline, separate drum and melody clip lanes; tap each clip to cycle Empty → A → B → C → D. Section names are labels, not automatic arrangement rules. Turn on **Play arrangement** to hear assigned clips across eight bars.
+- **Mixer:** existing per-drum level and mute controls preserved.
+- **Transport:** 60–180 BPM, play/stop toggle, bar/step readout, basic oscillator-based audio. With no input focused, Space toggles playback; keys 1–4 switch lab tabs.
+- **Projects:** browser-local save/load plus JSON export/import containing all patterns, melody grids, Playlist clips and mix settings.
 
-Testing performed so far: JavaScript syntax, basic simulated runtime flow, element-ID integrity, and GitHub readback. **Visual inspection and Mac audio/browser checks are still required.**
+The storage key `lukulu-academy-lab-v2` is **retained** for compatibility. Older exported projects with one drum pattern, eight piano rows and four named sections are migrated into the new four-pattern/eight-bar format on import or readback. To keep a portable backup, use **Export project JSON** before making major changes.
+
+### Tests and limitations
+- Run automated structural/state smoke checks with `node tests/student-hub-smoke.cjs` on a machine with compatible Node.js, or let GitHub Actions run the smoke workflow where enabled.
+- Static syntax, simulated pattern/Playlist/playback tests and DOM ID checks have been performed. **Audio quality, visual layout and device behaviour on the MacBook have not been verified.**
+- The simulator is an educational browser prototype, **not FL Studio**. It has no real MIDI file editor, plugin host, sample loading, professional audio engine, cloud storage, student login or payments.
+- Original Lukulu logo has not yet been verified; text/temporary branding remains.
 
 ## Try the prototype
 
