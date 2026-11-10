@@ -11,6 +11,24 @@
       "presentation": {"reveal": "always", "panel": "shared"}
     },
     {
+      "label": "Academy: Enable Safe Auto-Pull (Mac)",
+      "type": "shell",
+      "command": "bash",
+      "args": ["${workspaceFolder}/scripts/enable-autopull-mac.sh"],
+      "options": {"cwd": "${workspaceFolder}"},
+      "problemMatcher": [],
+      "presentation": {"reveal": "always"}
+    },
+    {
+      "label": "Academy: Disable Safe Auto-Pull (Mac)",
+      "type": "shell",
+      "command": "bash",
+      "args": ["${workspaceFolder}/scripts/disable-autopull-mac.sh"],
+      "options": {"cwd": "${workspaceFolder}"},
+      "problemMatcher": [],
+      "presentation": {"reveal": "always"}
+    },
+    {
       "label": "Academy: Check Git Status",
       "type": "shell",
       "command": "git",
