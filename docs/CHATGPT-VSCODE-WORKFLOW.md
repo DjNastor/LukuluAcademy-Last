@@ -45,7 +45,7 @@ The repository now includes an **opt-in** macOS Catalina-compatible LaunchAgent.
 
 **TRIGGERcmd:** The connected TRIGGERcmd account currently reports **no computers available**. Its currently listed Mac command is lock-screen only, not project sync. Do not try arbitrary remote commands until a specifically authorised, restricted Academy sync command is configured.
 
-**GitLab mirror:** `nastor1/LukuluAcademy-Last` exists and its `develop` commit was observed matching GitHub. Matching once does **not** prove ongoing two-way or automatic mirroring. Treat GitHub as the authoritative app repository. Do not push conflicting updates from both Git hosts without verifying the sync setup.
+**GitLab mirror:** `nastor1/LukuluAcademy-Last` exists and its `develop` commit was observed matching GitHub. Its branch matched GitHub before the new Mac auto-sync tooling commits; it subsequently lagged behind GitHub. Matching once does **not** prove ongoing two-way or automatic mirroring. Treat GitHub as the authoritative app repository. Do not push conflicting updates from both Git hosts without verifying the sync setup.
 
 ## Useful editor extensions
 
