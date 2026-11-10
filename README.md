@@ -2,6 +2,19 @@
 
 A responsive, single-file **development prototype** combining the Lukulu Academy public website, a student demo portal, introductory music-production and music-business lessons, a practice quiz, progress tracking, and a Web Audio 16-step drum sequencer.
 
+## ChatGPT + GitHub + Mac VS Code workflow
+
+This repository is the shared source for changes requested through ChatGPT and reviewed in VS Code. **Use `develop` for Academy changes; preserve `main`.**
+
+- [Mac / VS Code safe sync and preview guide](docs/CHATGPT-VSCODE-WORKFLOW.md)
+- [Development agent instructions](AGENTS.md)
+- [Google Drive asset review](docs/DRIVE-ACADEMY-ASSET-REVIEW.md)
+- [VS Code recommended extensions](.vscode/extensions.json)
+- [VS Code one-step Tasks](.vscode/tasks.json)
+- [Safe fast-forward pull script](scripts/sync-academy.sh)
+
+**Important:** VS Code automatically **fetches** incoming changes, not merges them. Run the **Academy: Safe Pull from GitHub** task after saving and reviewing local edits. The local Mac folder will not update itself until this task is run, or an approved Mac-side sync agent is connected and configured.
+
 ## Quick start in VS Code on Mac
 
 1. Open the `LukuluAcademy-Last` repository folder in **VS Code**.
