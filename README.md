@@ -1,6 +1,6 @@
 # Lukulu Academy Consolidated
 
-A responsive, single-file **development prototype** combining the Lukulu Academy public website, a student demo portal, introductory music-production and music-business lessons, a practice quiz, progress tracking, and a Web Audio 16-step drum sequencer.
+A responsive, two-page **development prototype** combining the Academy public website and Student Hub, introductory music-production and music-business lessons, a practice quiz, browser-local progress, and a Web Audio DAW simulator.
 
 ## ChatGPT + GitHub + Mac VS Code workflow
 
@@ -25,7 +25,7 @@ This repository is the shared source for changes requested through ChatGPT and r
 
 Repository: https://github.com/DjNastor/LukuluAcademy-Last
 
-## Redesigned Student Hub and DAW Lab — v0.3 prototype
+## Redesigned Student Hub and DAW Lab — v0.4 prototype
 
 Open **[`student-hub.html`](student-hub.html)** from `index.html` or directly in Chrome / VS Code Live Preview.
 
@@ -36,13 +36,19 @@ Open **[`student-hub.html`](student-hub.html)** from `index.html` or directly in
 ### FL Studio-inspired practice workspace
 - **Channel Rack:** four drums (kick, clap, hi-hat, percussion), 16 steps per bar, Afro House and four-on-floor presets.
 - **Four editable patterns (A–D):** choose a pattern, edit, duplicate into the next slot (confirmation before overwrite), or clear with confirmation.
-- **Piano Roll:** 13 chromatic pitches from C3 through C4, editable 16-step melody notes and note-key audition.
-- **Playlist:** eight-bar timeline, separate drum and melody clip lanes; tap each clip to cycle Empty → A → B → C → D. Section names are labels, not automatic arrangement rules. Turn on **Play arrangement** to hear assigned clips across eight bars.
+- **Piano Roll:** 13 chromatic pitches from C3 through C4, individual note-key audition, selectable 1/2/4/8-step note lengths, sustained-note display and audio, and Shift-click resizing.
+- **Playlist:** eight-bar timeline with separate drum and melody lanes, Draw (select A–D), Erase and Cycle tools, a duplicate-bars-1–4-to-5–8 control, and an independently confirmed Clear Clips action. Section names remain labels, not automatic arrangement rules. Turn on **Play arrangement** to hear assigned clips.
 - **Mixer:** existing per-drum level and mute controls preserved.
 - **Transport:** 60–180 BPM, play/stop toggle, bar/step readout, basic oscillator-based audio. With no input focused, Space toggles playback; keys 1–4 switch lab tabs.
-- **Projects:** browser-local save/load plus JSON export/import containing all patterns, melody grids, Playlist clips and mix settings.
+- **Projects:** browser-local save/load plus version 4 JSON export/import containing pattern banks, note starts and lengths, Playlist clips, tempo and mix settings.
 
-The storage key `lukulu-academy-lab-v2` is **retained** for compatibility. Older exported projects with one drum pattern, eight piano rows and four named sections are migrated into the new four-pattern/eight-bar format on import or readback. To keep a portable backup, use **Export project JSON** before making major changes.
+The storage key `lukulu-academy-lab-v2` is **retained** for compatibility. Older exported projects with one drum pattern, eight piano rows and four named sections are migrated into the current four-pattern/eight-bar format. Earlier on/off piano notes become one-step notes when no duration data exists; existing note starts are retained. To keep a portable backup, use **Export project JSON** before making major changes.
+
+### Working with the new editors
+
+In **Piano Roll**, choose a duration, then click an empty step to draw a note. Click its starting step again to remove it; **Shift-click** the starting step to resize to the selected duration. If you place another note on the same pitch before an existing note ends, its previous note tail is shortened so the notes do not overlap. The longest note stays inside the 16-step bar.
+
+In **Playlist**, choose **Draw**, a pattern A–D, and the desired clip cell to place that pattern directly. **Erase** removes a clip while retaining its source pattern. **Cycle** continues the older empty/A/B/C/D behaviour. The duplicate button copies the first four bars into bars five through eight after confirmation. Project JSON backups are recommended before editing.
 
 ### Tests and limitations
 - Run automated structural/state smoke checks with `node tests/student-hub-smoke.cjs` on a machine with compatible Node.js, or let GitHub Actions run the smoke workflow where enabled.
