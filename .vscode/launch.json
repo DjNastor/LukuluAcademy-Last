@@ -1,0 +1,27 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Attach to Chrome",
+      "port": 9222,
+      "request": "attach",
+      "type": "chrome",
+      "webRoot": "${workspaceFolder}"
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Launch Chrome against localhost",
+      "url": "http://localhost:8080",
+      "webRoot": "${workspaceFolder}"
+    },
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "lldb",
+      "request": "launch",
+      "args": [],
+      "cwd": "/Users/mac/Documents 2/Lukulu Tools/Lukulu Academy/LukuluAcademy-Last",
+      "program": "/Users/mac/Documents 2/Lukulu Tools/Lukulu Academy/LukuluAcademy-Last/build/Debug/outDebug"
+    }
+  ]
+}

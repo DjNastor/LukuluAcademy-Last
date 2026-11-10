@@ -1,0 +1,26 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Server (server.js)",
+      "program": "${workspaceFolder}/server.js",
+      "cwd": "${workspaceFolder}",
+      "restart": true,
+      "env": {
+        "PORT": "5500",
+        "NODE_ENV": "development"
+      },
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "type": "debugpy",
+      "request": "launch",
+      "name": "Python File",
+      "program": "${file}",
+      "console": "integratedTerminal"
+    }
+  ]
+}
