@@ -12,6 +12,23 @@ A responsive, single-file **development prototype** combining the Lukulu Academy
 
 Repository: https://github.com/DjNastor/LukuluAcademy-Last
 
+## Updated Student Hub and DAW Lab (development preview)
+
+The redesigned, responsive Student Hub is now in **[`student-hub.html`](student-hub.html)**. Open it from the public Academy `index.html` demo buttons or directly in your browser.
+
+- **Overview**: learning progress, quiz results, DAW practice steps and a next-lesson shortcut.
+- **My learning**: four sample lessons, reading tasks and a two-question quiz.
+- **DAW Lab / Channel Rack**: four drum tracks, 16-step buttons, presets and 60–180 BPM playback.
+- **DAW Lab / Piano Roll**: eight pitch rows across 16 steps, with basic synthesized melody playback.
+- **DAW Lab / Playlist**: four bars with selectable Intro / Groove / Breakdown / Outro roles and optional arrangement playback.
+- **DAW Lab / Mixer**: per-track volume and mute.
+- **My work**: export student demo backup or reset local demo data.
+- **Save/Import/Export**: the DAW project can be saved in browser storage and exported/imported as JSON. Existing `lukulu-academy-demo-v1` lesson progress is reused.
+
+**This is an educational proof of concept, not FL Studio or a production LMS.** The original approved logo is not integrated; text branding is used temporarily. Neither payments nor real student authentication are available.
+
+Testing performed so far: JavaScript syntax, basic simulated runtime flow, element-ID integrity, and GitHub readback. **Visual inspection and Mac audio/browser checks are still required.**
+
 ## Try the prototype
 
 - **Home / Courses / Pricing**: browse the public website; displayed pricing is illustrative, not a live offer.
