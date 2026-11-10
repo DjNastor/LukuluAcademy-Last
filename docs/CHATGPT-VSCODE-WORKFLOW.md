@@ -31,7 +31,21 @@
 - **Safe Pull** updates the local folder only when you start it, the current branch is `develop`, and there are no local modifications/untracked files. It refuses divergent histories.
 - If you edit in VS Code, use Source Control: review → commit → push. The new commits then become visible to ChatGPT via GitHub.
 
-For a true unattended local auto-pull / remote editing experience, connect the Mac to Terminal Commands or Remote Desktop Commander and approve a background sync process after we verify unsaved-work behavior. **Do not configure force pulls, automatic stashing or unattended pushes.** Background auto-pull is not enabled yet.
+### Optional five-minute Mac auto-pull (requires one-time setup)
+
+The repository now includes an **opt-in** macOS Catalina-compatible LaunchAgent. This does **not** start until you explicitly run the VS Code task:
+
+1. Save all open buffers, review Source Control, select `develop` and run **Academy: Safe Pull from GitHub**.
+2. Run **Tasks: Run Task → Academy: Enable Safe Auto-Pull (Mac)**.
+3. The installer validates the repository's known GitHub origin, active branch and clean saved working tree, then registers a user-level `launchd` job.
+4. Every 5 minutes while logged into macOS, the job attempts a **fast-forward-only** sync. If there are saved edits, untracked files, the wrong branch, or diverging commits, it stops without overwriting files.
+5. To stop future syncs, run **Academy: Disable Safe Auto-Pull (Mac)**. The original project remains untouched.
+
+**Important:** Git cannot see unsaved VS Code editor buffers. An unattended pull could update the disk while an unsaved document is open. Keep auto-pull disabled during active editing sessions where you have unsaved changes, and use manual Safe Pull when switching between ChatGPT and VS Code. There is no automatic push or silent stash. The installer requires Python 3 and is not presently installed on the Mac because remote computer access is offline.
+
+**TRIGGERcmd:** The connected TRIGGERcmd account currently reports **no computers available**. Its currently listed Mac command is lock-screen only, not project sync. Do not try arbitrary remote commands until a specifically authorised, restricted Academy sync command is configured.
+
+**GitLab mirror:** `nastor1/LukuluAcademy-Last` exists and its `develop` commit was observed matching GitHub. Matching once does **not** prove ongoing two-way or automatic mirroring. Treat GitHub as the authoritative app repository. Do not push conflicting updates from both Git hosts without verifying the sync setup.
 
 ## Useful editor extensions
 
@@ -60,3 +74,13 @@ Workspace recommendations are in `.vscode/extensions.json`. Install only version
 - **Brand logos/course material:** verify originals and usage rights.
 - **Authentication, payments, student information, school certificates and production changes:** explicit human approval, backend security and testing required.
 - **If Git and Drive disagree:** GitHub controls app source code; approved course documents control teaching content; user decisions control approved prices/branding. Never let an old prototype silently overwrite current code.
+
+## Codex / ChatGPT Plugin Autopilot and Universal Plugin Installer
+
+These tools manage **ChatGPT/Codex Plugins and Skills**, **not VS Code Marketplace extensions**.
+
+- **Plugin Autopilot:** useful later if we package the Academy workflow itself as a reusable private Codex Plugin (requires a distinct packaging/review effort, validation and your chosen scope).
+- **Universal Plugin Installer:** converts candidate Skills in a **specified local source directory** into reviewable Codex plugin folders. Do not run it on a random download or the Academy repo as a substitute for installing VS Code extensions. A source directory is required to use it.
+- **GitLab:** has a user-owned Academy repository for secondary code hosting, separate from GitHub. Do not assume bidirectional sync merely because commit hashes match.
+- **TRIGGERcmd:** can run only preconfigured commands on an enrolled device. Before connecting it to Academy, define and test a limited Safe Pull command, never arbitrary shell access by default.
+
