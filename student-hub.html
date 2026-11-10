@@ -478,9 +478,28 @@ function renderPiano(){
  $("pianoGrid").classList.add("piano-timeline");
  const header='<div class="note-row rack-row header"><span>PIANO KEY</span>'+Array.from({length:16},(_,i)=>'<span style="text-align:center;color:'+(i%4===0?'#b7f2c1':'#92a99a')+'">'+(i+1)+'</span>').join("")+'</div>';
  $("pianoGrid").innerHTML=header+NOTES.map((entry,r)=>{
-  const black=entry[0].includes("#");
-  return '<div class="note-row"><button type="button" class="key-label'+(black?' black-key':'')+'" data-audition="'+r+'" aria-label="Audition '+entry[0]+'">'+entry[0]+' <span aria-hidden="true">▶</span></button>'+lab.melody[r].map((on,i)=>'<button type="button" class="hit notehit'+(on?" on":"")+'" data-note="'+r+'" data-step="'+i+'" aria-label="'+entry[0]+' pattern '+lab.activePattern+' step '+(i+1)+'" aria-pressed="'+on+'"></button>').join("")+'</div>';
+  const black=entry[0].includes("#"),tail=Array(16).fill(-1);
+  lab.melody[r].forEach((on,s)=>{
+   if(on)for(let k=1;k<(lab.noteLengths[r][s]||1)&&s+k<16;k++)tail[s+k]=s;
+  });
+  return '<div class="note-row"><button type="button" class="key-label'+(black?' black-key':'')+'" data-audition="'+r+'" aria-label="Audition '+entry[0]+'">'+entry[0]+' <span aria-hidden="true">▶</span></button>'+lab.melody[r].map((on,i)=>{
+   const held=tail[i]>=0,length=on?(lab.noteLengths[r][i]||1):0;
+   const label=on?entry[0]+' note starting at step '+(i+1)+', length '+length+' steps. Click to remove, shift-click to resize.':
+      held?entry[0]+' held from step '+(tail[i]+1)+'. Click to draw a new note here.':
+      'Draw '+entry[0]+' note at step '+(i+1);
+   return '<button type="button" class="hit notehit'+(on?' note-head on':held?' sustain':'')+'" data-note="'+r+'" data-step="'+i+'" aria-label="'+label+'" aria-pressed="'+on+'" title="'+label+'">'+(on?'<span aria-hidden="true">'+length+'</span>':'')+'</button>';
+  }).join("")+'</div>';
  }).join("");
+}
+function setPianoNote(r,s,resize=false){
+ if(!Number.isInteger(r)||!Number.isInteger(s)||r<0||r>=NOTES.length||s<0||s>=16)return;
+ const length=[1,2,4,8].includes(Number($("noteLength").value))?Number($("noteLength").value):1;
+ if(lab.melody[r][s]&&!resize){lab.melody[r][s]=false;lab.noteLengths[r][s]=0}
+ else{lab.melody[r][s]=true;lab.noteLengths[r][s]=length}
+ lab.noteLengths=reconcileLengths(lab.melody,lab.noteLengths);
+ saveLab(true);renderPiano();
+ document.querySelector?.('[data-note="'+r+'"][data-step="'+s+'"]')?.focus();
+ msg(NOTES[r][0]+" at step "+(s+1)+": "+(lab.melody[r][s]?lab.noteLengths[r][s]+"-step note":"removed")+".");
 }
 function renderPatternPicker(){
  $("patternPicker").innerHTML=PATTERN_IDS.map(id=>'<button type="button" data-pattern="'+id+'" aria-pressed="'+(id===lab.activePattern)+'" aria-label="Edit pattern '+id+'">'+id+'</button>').join("");
@@ -561,7 +580,12 @@ function tick(){
  $("transportPosition").textContent="BAR "+String(bar+1).padStart(2,"0")+" : STEP "+String(step+1).padStart(2,"0");
  const now=audio.currentTime+.015;
  if(drums)drums.forEach((row,r)=>{if(row[step])drumSound(r,now)});
- if(melody)melody.forEach((row,r)=>{if(row[step])tone(NOTES[r][1],.19,.052,"sine",now)});
+ if(melody)melody.forEach((row,r)=>{
+  if(!row[step])return;
+  const length=lab.patternBank[melodyId]?.noteLengths?.[r]?.[step]||1;
+  const stepSeconds=60/lab.tempo/4;
+  tone(NOTES[r][1],Math.max(.06,stepSeconds*length*.94),.052,"sine",now);
+ });
  tickIndex=(tickIndex+1)%(lab.arrangeMode?128:16);
 }
 async function auditionNote(i){
@@ -590,8 +614,8 @@ function downloadJSON(filename,value){
 }
 function exportLab(){
  syncActivePattern();
- downloadJSON("lukulu-academy-daw-project.json",{format:"lukulu-academy-lab-v3",...deepCopy(lab)});
- msg("DAW project exported as JSON, including patterns and Playlist clips.");
+ downloadJSON("lukulu-academy-daw-project.json",{format:"lukulu-academy-lab-v4",...deepCopy(lab)});
+ msg("DAW project exported as JSON with note lengths, patterns and Playlist clips.");
 }
 async function importLab(file){
  if(!file)return;
@@ -601,7 +625,7 @@ async function importLab(file){
   const imported=hydrateLab(obj);
   if(!imported){msg("Invalid project. Expected a Lukulu DAW project with four 16-step drum tracks.");return}
   stopAudio();lab=imported;saveLab(true);renderStudio();
-  msg("Project imported. Patterns, piano notes and Playlist restored.");
+  msg("Project imported. Patterns, piano notes, lengths and Playlist restored.");
  }catch{msg("Could not read project JSON. Check the file and try again.")}
 }
 function resetDemo(){
@@ -626,7 +650,7 @@ document.addEventListener("click",e=>{
  const d=e.target.closest("[data-drum]");
  if(d){const r=Number(d.dataset.drum),s=Number(d.dataset.step);lab.pattern[r][s]=!lab.pattern[r][s];d.classList.toggle("on",lab.pattern[r][s]);d.setAttribute("aria-pressed",String(lab.pattern[r][s]));saveLab(true);renderOverview();return}
  const n=e.target.closest("[data-note]");
- if(n){const r=Number(n.dataset.note),s=Number(n.dataset.step);lab.melody[r][s]=!lab.melody[r][s];n.classList.toggle("on",lab.melody[r][s]);n.setAttribute("aria-pressed",String(lab.melody[r][s]));saveLab(true);return}
+ if(n){setPianoNote(Number(n.dataset.note),Number(n.dataset.step),e.shiftKey===true);return}
  const p=e.target.closest("[data-preset]");
  if(p){preset(p.dataset.preset);return}
  const m=e.target.closest("[data-mute]");
@@ -655,7 +679,7 @@ document.addEventListener("keydown",e=>{
 $("play").addEventListener("click",()=>{if(timer!==null){stopAudio();msg("Playback stopped.")}else playAudio()});
 $("stop").addEventListener("click",()=>{stopAudio();msg("Playback stopped.")});
 $("clearDrums").addEventListener("click",()=>{stopAudio();lab.pattern=TRACKS.map(()=>Array(16).fill(false));saveLab(true);renderRack();renderOverview();msg("Drum steps cleared.")});
-$("clearPiano").addEventListener("click",()=>{stopAudio();lab.melody=defaultMelody();saveLab(true);renderPiano();msg("Piano Roll cleared.")});
+$("clearPiano").addEventListener("click",()=>{stopAudio();lab.melody=defaultMelody();lab.noteLengths=defaultLengths();saveLab(true);renderPiano();msg("Piano Roll cleared.")});
 $("saveLab").addEventListener("click",()=>saveLab());
 $("exportLab").addEventListener("click",exportLab);
 $("importLab").addEventListener("click",()=>$("patternFile").click());
