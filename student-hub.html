@@ -490,7 +490,8 @@ function preset(kind){
 function clearPlaying(){document.querySelectorAll(".hit.playing").forEach(b=>b.classList.remove("playing"))}
 function stopAudio(){
  if(timer!==null){clearInterval(timer);timer=null}
- clearPlaying();$("play").textContent="▶ Play";tickIndex=0;
+ clearPlaying();document.querySelectorAll(".clip-slot.playhead").forEach(b=>b.classList.remove("playhead"));
+ $("play").textContent="▶ Play";$("transportPosition").textContent="BAR 01 : STEP 01";tickIndex=0;
 }
 function tone(frequency,duration,volume,type,at){
  if(!audio||volume<=0)return;
@@ -515,14 +516,25 @@ function allowDrum(r,section){
  return r===0||r===1;
 }
 function tick(){
- const step=tickIndex%16,bar=Math.floor(tickIndex/16)%4;
- const section=lab.arrangeMode?lab.sections[bar]:"Groove";
- clearPlaying();
+ const step=tickIndex%16,bar=lab.arrangeMode?Math.floor(tickIndex/16)%8:0;
+ const drumsId=lab.arrangeMode?lab.clips.drums[bar]:lab.activePattern;
+ const melodyId=lab.arrangeMode?lab.clips.melody[bar]:lab.activePattern;
+ const drums=drumsId&&lab.patternBank[drumsId]?.pattern;
+ const melody=melodyId&&lab.patternBank[melodyId]?.melody;
+ clearPlaying();document.querySelectorAll(".clip-slot.playhead").forEach(b=>b.classList.remove("playhead"));
  document.querySelectorAll('[data-step="'+step+'"]').forEach(b=>b.classList.add("playing"));
+ if(lab.arrangeMode)document.querySelectorAll('.clip-slot[data-bar="'+bar+'"]').forEach(b=>b.classList.add("playhead"));
+ $("transportPosition").textContent="BAR "+String(bar+1).padStart(2,"0")+" : STEP "+String(step+1).padStart(2,"0");
  const now=audio.currentTime+.015;
- lab.pattern.forEach((row,r)=>{if(row[step]&&allowDrum(r,section))drumSound(r,now)});
- if(section!=="Intro"&&section!=="Outro")lab.melody.forEach((row,r)=>{if(row[step])tone(NOTES[r][1],.19,.055,"sine",now)});
- tickIndex=(tickIndex+1)%(lab.arrangeMode?64:16);
+ if(drums)drums.forEach((row,r)=>{if(row[step])drumSound(r,now)});
+ if(melody)melody.forEach((row,r)=>{if(row[step])tone(NOTES[r][1],.19,.052,"sine",now)});
+ tickIndex=(tickIndex+1)%(lab.arrangeMode?128:16);
+}
+async function auditionNote(i){
+ const Ctx=window.AudioContext||window.webkitAudioContext;
+ if(!Ctx||!NOTES[i])return;
+ try{audio=audio||new Ctx();await audio.resume();if(audio.state==="running")tone(NOTES[i][1],.23,.065,"sine",audio.currentTime+.012)}
+ catch{msg("Note preview unavailable. Check browser sound permissions.")}
 }
 async function playAudio(){
  if(timer!==null)return;
@@ -533,7 +545,7 @@ async function playAudio(){
   if(audio.state!=="running"){msg("Audio is blocked. Tap Play again after enabling sound.");return}
   lab.tempo=boundedTempo($("tempo").value);$("tempo").value=lab.tempo;saveLab(true);
   tickIndex=0;tick();timer=setInterval(tick,60000/lab.tempo/4);$("play").textContent="● Playing";
-  msg(lab.arrangeMode?"Playing four-bar arrangement.":"Playing the current 16-step pattern.");
+  msg(lab.arrangeMode?"Playing eight-bar clip arrangement.":"Playing Pattern "+lab.activePattern+".");
  }catch{msg("Audio could not start. Check browser sound permissions.")}
 }
 function downloadJSON(filename,value){
@@ -542,23 +554,21 @@ function downloadJSON(filename,value){
  a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();
  setTimeout(()=>URL.revokeObjectURL(url),2000);
 }
-function exportLab(){downloadJSON("lukulu-academy-daw-project.json",{format:"lukulu-academy-lab-v2",...deepCopy(lab)});msg("DAW project exported as JSON.")}
+function exportLab(){
+ syncActivePattern();
+ downloadJSON("lukulu-academy-daw-project.json",{format:"lukulu-academy-lab-v3",...deepCopy(lab)});
+ msg("DAW project exported as JSON, including patterns and Playlist clips.");
+}
 async function importLab(file){
  if(!file)return;
  if(file.size>100000){msg("File too large. Maximum project size is 100 KB.");return}
  try{
   const obj=JSON.parse(await file.text());
-  if(!validMatrix(obj.pattern,4)){msg("Invalid project: expected four drum tracks of sixteen true/false steps.");return}
-  stopAudio();let next=defaults();
-  next.pattern=deepCopy(obj.pattern);
-  if(validMatrix(obj.melody,8))next.melody=deepCopy(obj.melody);
-  next.tempo=boundedTempo(obj.tempo??obj.bpm);
-  if(Array.isArray(obj.sections)&&obj.sections.length===4&&obj.sections.every(s=>["Intro","Groove","Breakdown","Outro"].includes(s)))next.sections=obj.sections.slice();
-  next.arrangeMode=obj.arrangeMode===true;
-  if(Array.isArray(obj.levels)&&obj.levels.length===4)next.levels=obj.levels.map(v=>Number.isFinite(Number(v))?Math.max(0,Math.min(100,Math.round(Number(v)))):70);
-  if(Array.isArray(obj.muted)&&obj.muted.length===4)next.muted=obj.muted.map(Boolean);
-  lab=next;saveLab(true);renderStudio();msg("Project imported and saved in this browser.");
- }catch{msg("Could not read the project JSON file.")}
+  const imported=hydrateLab(obj);
+  if(!imported){msg("Invalid project. Expected a Lukulu DAW project with four 16-step drum tracks.");return}
+  stopAudio();lab=imported;saveLab(true);renderStudio();
+  msg("Project imported. Patterns, piano notes and Playlist restored.");
+ }catch{msg("Could not read project JSON. Check the file and try again.")}
 }
 function resetDemo(){
  if(!window.confirm("Reset all Lukulu Academy demo lessons, quiz and DAW work saved in this browser? Export a backup first if needed."))return;
@@ -567,6 +577,12 @@ function resetDemo(){
  renderLessons();renderStudio();renderOverview();$("workStatus").textContent="Demo learning progress and DAW project reset.";
 }
 document.addEventListener("click",e=>{
+ const picker=e.target.closest("[data-pattern]");
+ if(picker){choosePattern(picker.dataset.pattern);return}
+ const clip=e.target.closest("[data-clip-lane]");
+ if(clip){cycleClip(clip.dataset.clipLane,Number(clip.dataset.bar));return}
+ const audition=e.target.closest("[data-audition]");
+ if(audition){auditionNote(Number(audition.dataset.audition));return}
  const go=e.target.closest("[data-go],[data-nav]");
  if(go){changeView(go.dataset.go||go.dataset.nav);return}
  const l=e.target.closest("[data-lesson]");
@@ -591,6 +607,16 @@ document.addEventListener("change",e=>{
  if(s){lab.sections[Number(s.dataset.section)]=s.value;saveLab(true)}
  if(e.target.id==="arrangeMode"){lab.arrangeMode=e.target.checked;stopAudio();saveLab(true)}
  if(e.target.id==="tempo"){lab.tempo=boundedTempo(e.target.value);e.target.value=lab.tempo;if(timer!==null){stopAudio();msg("Tempo updated. Press Play to restart.")}saveLab(true)}
+});
+$("clonePattern").addEventListener("click",duplicatePattern);
+$("emptyPattern").addEventListener("click",clearActivePattern);
+document.addEventListener("keydown",e=>{
+ if(currentView!=="lab"||e.altKey||e.ctrlKey||e.metaKey||e.shiftKey||e.repeat)return;
+ const tag=e.target?.tagName?.toLowerCase()||"";
+ if(["input","select","textarea","button","a"].includes(tag)||e.target?.isContentEditable)return;
+ if(e.code==="Space"){e.preventDefault();timer!==null?stopAudio():playAudio();return}
+ const views=["rack","piano","playlist","mixer"],i=Number(e.key)-1;
+ if(i>=0&&i<4){switchLabTab(views[i]);e.preventDefault()}
 });
 $("play").addEventListener("click",playAudio);
 $("stop").addEventListener("click",()=>{stopAudio();msg("Playback stopped.")});
