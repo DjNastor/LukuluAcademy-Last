@@ -1,0 +1,49 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Academy: Safe Pull from GitHub",
+      "type": "shell",
+      "command": "bash",
+      "args": ["${workspaceFolder}/scripts/sync-academy.sh"],
+      "options": {"cwd": "${workspaceFolder}"},
+      "problemMatcher": [],
+      "presentation": {"reveal": "always", "panel": "shared"}
+    },
+    {
+      "label": "Academy: Check Git Status",
+      "type": "shell",
+      "command": "git",
+      "args": ["status", "--short", "--branch"],
+      "options": {"cwd": "${workspaceFolder}"},
+      "problemMatcher": []
+    },
+    {
+      "label": "Academy: Fetch GitHub Updates (no file changes)",
+      "type": "shell",
+      "command": "git",
+      "args": ["fetch", "origin", "develop"],
+      "options": {"cwd": "${workspaceFolder}"},
+      "problemMatcher": []
+    },
+    {
+      "label": "Academy: Preview Website (Python)",
+      "type": "shell",
+      "command": "python3",
+      "args": ["-m", "http.server", "5500", "--bind", "127.0.0.1"],
+      "options": {"cwd": "${workspaceFolder}"},
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {"reveal": "always", "panel": "dedicated"}
+    },
+    {
+      "label": "Academy: Test Student Hub (Node optional)",
+      "type": "shell",
+      "command": "node",
+      "args": ["tests/student-hub-smoke.cjs"],
+      "options": {"cwd": "${workspaceFolder}"},
+      "problemMatcher": [],
+      "presentation": {"reveal": "always"}
+    }
+  ]
+}
