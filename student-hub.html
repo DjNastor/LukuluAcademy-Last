@@ -266,8 +266,8 @@ small{color:var(--muted)}
 <section class="screen" data-screen="lab" hidden>
  <div class="heading-row"><div><div class="eyebrow">Practice studio / version 0.2</div><h1>Lukulu DAW Lab</h1><p>A beginner-friendly music workstation with drums, piano-roll practice, song sections and basic mixing. It is not FL Studio itself.</p></div></div>
  <div class="lab-shell">
-  <div class="lab-top"><div><div class="eyebrow">Beat-making workspace</div><h2>My first track <small style="color:#91ae97;font-weight:400;font-size:12px">● browser project</small></h2><p>Tap steps to create your beat. Use headphones at a comfortable volume.</p></div>
-   <div class="lab-controls"><span class="transport-pos" id="transportPosition" aria-live="off">BAR 01 : STEP 01</span><label for="tempo">BPM</label><input id="tempo" type="number" min="60" max="180" step="1" value="110"><button id="play" class="primary">▶ Play</button><button id="stop" class="outline">■ Stop</button></div>
+  <div class="lab-top"><div><div class="eyebrow">Beat-making workspace</div><h2>My first track <small style="color:#91ae97;font-weight:400;font-size:12px">● browser project</small></h2><p>Tap steps to create your beat. Space: play/stop · 1–4: switch studio tabs (when not typing). Use headphones at a comfortable volume.</p></div>
+   <div class="lab-controls"><span class="transport-pos" id="transportPosition" aria-live="off">BAR 01 : STEP 01</span><label for="tempo">BPM</label><input id="tempo" type="number" min="60" max="180" step="1" value="110"><button id="play" class="primary" aria-pressed="false" aria-label="Start or stop playback">▶ Play</button><button id="stop" class="outline">■ Stop</button></div>
   </div>
   <div class="pattern-toolbar" aria-label="Pattern editor controls"><div class="pattern-toolbar-label"><strong>PATTERN SELECTOR</strong><small>Edit one pattern, then arrange clips in the Playlist</small></div><div id="patternPicker" class="pattern-picker" role="group" aria-label="Current pattern"></div><button type="button" id="clonePattern" class="pattern-tool">Duplicate →</button><button type="button" id="emptyPattern" class="pattern-tool">Clear active</button><span class="pattern-help" id="patternStatus" role="status">Pattern A active</span></div>
   <div class="lab-nav" role="tablist" aria-label="DAW lab views"><button id="tab-rack" role="tab" aria-controls="panel-rack" aria-selected="true" data-lab-tab="rack">Channel Rack</button><button id="tab-piano" role="tab" aria-controls="panel-piano" aria-selected="false" data-lab-tab="piano">Piano Roll</button><button id="tab-playlist" role="tab" aria-controls="panel-playlist" aria-selected="false" data-lab-tab="playlist">Playlist</button><button id="tab-mixer" role="tab" aria-controls="panel-mixer" aria-selected="false" data-lab-tab="mixer">Mixer</button></div>
@@ -491,7 +491,7 @@ function clearPlaying(){document.querySelectorAll(".hit.playing").forEach(b=>b.c
 function stopAudio(){
  if(timer!==null){clearInterval(timer);timer=null}
  clearPlaying();document.querySelectorAll(".clip-slot.playhead").forEach(b=>b.classList.remove("playhead"));
- $("play").textContent="▶ Play";$("transportPosition").textContent="BAR 01 : STEP 01";tickIndex=0;
+ $("play").textContent="▶ Play";$("play").setAttribute("aria-pressed","false");$("transportPosition").textContent="BAR 01 : STEP 01";tickIndex=0;
 }
 function tone(frequency,duration,volume,type,at){
  if(!audio||volume<=0)return;
@@ -544,7 +544,7 @@ async function playAudio(){
   audio=audio||new Ctx();await audio.resume();
   if(audio.state!=="running"){msg("Audio is blocked. Tap Play again after enabling sound.");return}
   lab.tempo=boundedTempo($("tempo").value);$("tempo").value=lab.tempo;saveLab(true);
-  tickIndex=0;tick();timer=setInterval(tick,60000/lab.tempo/4);$("play").textContent="● Playing";
+  tickIndex=0;tick();timer=setInterval(tick,60000/lab.tempo/4);$("play").textContent="● Playing";$("play").setAttribute("aria-pressed","true");
   msg(lab.arrangeMode?"Playing eight-bar clip arrangement.":"Playing Pattern "+lab.activePattern+".");
  }catch{msg("Audio could not start. Check browser sound permissions.")}
 }
@@ -618,7 +618,7 @@ document.addEventListener("keydown",e=>{
  const views=["rack","piano","playlist","mixer"],i=Number(e.key)-1;
  if(i>=0&&i<4){switchLabTab(views[i]);e.preventDefault()}
 });
-$("play").addEventListener("click",playAudio);
+$("play").addEventListener("click",()=>{if(timer!==null){stopAudio();msg("Playback stopped.")}else playAudio()});
 $("stop").addEventListener("click",()=>{stopAudio();msg("Playback stopped.")});
 $("clearDrums").addEventListener("click",()=>{stopAudio();lab.pattern=TRACKS.map(()=>Array(16).fill(false));saveLab(true);renderRack();renderOverview();msg("Drum steps cleared.")});
 $("clearPiano").addEventListener("click",()=>{stopAudio();lab.melody=defaultMelody();saveLab(true);renderPiano();msg("Piano Roll cleared.")});
