@@ -1,0 +1,32 @@
+name: Academy developer tooling checks
+
+on:
+  push:
+    branches: [develop]
+    paths:
+      - ".vscode/**"
+      - "scripts/**"
+      - ".github/workflows/academy-tooling.yml"
+  pull_request:
+    branches: [develop, main]
+    paths:
+      - ".vscode/**"
+      - "scripts/**"
+      - ".github/workflows/academy-tooling.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  tooling:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Check shell scripts
+        run: bash -n scripts/sync-academy.sh scripts/enable-autopull-mac.sh scripts/disable-autopull-mac.sh
+      - name: Validate VS Code task and settings JSON
+        run: |
+          python3 -m json.tool .vscode/tasks.json > /dev/null
+          python3 -m json.tool .vscode/settings.json > /dev/null
