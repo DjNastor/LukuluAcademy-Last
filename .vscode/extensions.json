@@ -1,0 +1,11 @@
+{
+  // Open Extensions in VS Code and select "Install Workspace Recommended Extensions".
+  "recommendations": [
+    "ms-vscode.live-server",
+    "esbenp.prettier-vscode",
+    "GitHub.vscode-pull-request-github",
+    "eamodio.gitlens",
+    "ms-python.python",
+    "EditorConfig.EditorConfig"
+  ]
+}
