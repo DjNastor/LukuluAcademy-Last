@@ -50,7 +50,7 @@ const window={AudioContext:FakeAudioContext,addEventListener(){},scrollTo(){},co
 const history={replaceState(){}},location={hash:""};
 const context=vm.createContext({window,document,localStorage,history,location,console,Blob,URL,
   setInterval:()=>42,clearInterval:()=>{}});
-vm.runInContext(script+"\n;globalThis.__test={getLab:()=>lab,getLearn:()=>learn,activeSteps,choosePattern,duplicatePattern,cycleClip,hydrateLab,saveLab,playAudio,stopAudio,tick,renderPlaylist,completeLesson,validMatrix};",context,{
+vm.runInContext(script+"\n;globalThis.__test={getLab:()=>lab,getLearn:()=>learn,activeSteps,choosePattern,duplicatePattern,cycleClip,hydrateLab,saveLab,playAudio,stopAudio,tick,renderPlaylist,completeLesson,validMatrix,setPianoNote,renderPiano,applyClipTool,duplicateBars,clearPlaylistClips,reconcileLengths};",context,{
   filename:"student-hub.html",timeout:5000
 });
 const api=context.__test;
@@ -104,6 +104,42 @@ async function main(){
    assert.equal(migrated.sections.length,8);
    assert.equal(migrated.sections[1],"Intro");
    assert.equal(migrated.tempo,128);
+   assert.equal(migrated.noteLengths[12][0],1);
+ });
+ test("Piano Roll draws, resizes and truncates sustained notes",()=>{
+   el("noteLength").value="4";
+   api.setPianoNote(5,2);
+   assert.equal(api.getLab().melody[5][2],true);
+   assert.equal(api.getLab().noteLengths[5][2],4);
+   assert.match(el("pianoGrid").innerHTML,/note-head/);
+   assert.match(el("pianoGrid").innerHTML,/sustain/);
+   api.setPianoNote(5,4);
+   assert.equal(api.getLab().noteLengths[5][2],2);
+   el("noteLength").value="2";
+   api.setPianoNote(5,4,true);
+   assert.equal(api.getLab().noteLengths[5][4],2);
+   api.choosePattern("A");
+   api.choosePattern("C");
+   assert.equal(api.getLab().noteLengths[5][2],2);
+   assert.equal(api.getLab().noteLengths[5][4],2);
+ });
+ test("Playlist draw and erase tools select patterns directly",()=>{
+   el("playlistTool").value="draw";el("playlistPattern").value="D";
+   api.applyClipTool("melody",1);
+   assert.equal(api.getLab().clips.melody[1],"D");
+   el("playlistTool").value="erase";
+   api.applyClipTool("melody",1);
+   assert.equal(api.getLab().clips.melody[1],"");
+   el("playlistTool").value="cycle";
+   api.applyClipTool("melody",1);
+   assert.equal(api.getLab().clips.melody[1],"A");
+ });
+ test("Duplicating four Playlist bars copies both lanes and section labels",()=>{
+   api.getLab().sections[0]="Breakdown";
+   api.duplicateBars();
+   assert.equal(api.getLab().clips.drums[4],api.getLab().clips.drums[0]);
+   assert.equal(api.getLab().clips.melody[5],api.getLab().clips.melody[1]);
+   assert.equal(api.getLab().sections[4],"Breakdown");
  });
  test("Malformed project is rejected",()=>{
    assert.equal(api.hydrateLab({pattern:[true]}),null);
@@ -124,7 +160,15 @@ async function main(){
    const stored=JSON.parse(storage.get("lukulu-academy-lab-v2"));
    assert.equal(stored.activePattern,"C");
    assert.ok(stored.patternBank.B.melody[2][6]);
+   assert.equal(stored.patternBank.C.noteLengths[5][4],2);
    assert.equal(stored.clips.drums[0],"C");
+ });
+ test("Clearing clips keeps the saved pattern and Piano Roll content",()=>{
+   const pattern=JSON.stringify(api.getLab().patternBank.C);
+   api.clearPlaylistClips();
+   assert.equal(api.getLab().clips.drums.every(x=>x===""),true);
+   assert.equal(api.getLab().clips.melody.every(x=>x===""),true);
+   assert.equal(JSON.stringify(api.getLab().patternBank.C),pattern);
  });
  console.log("PASS: "+checks.length+" Academy Student Hub / DAW checks");
  checks.forEach((name,i)=>console.log("  "+(i+1)+". "+name));
