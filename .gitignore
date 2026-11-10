@@ -1,0 +1,26 @@
+# macOS / development temporary files
+.DS_Store
+**/.DS_Store
+__pycache__/
+*.pyc
+*.log
+node_modules/
+dist/
+build/
+.cache/
+
+# Secrets and local configuration (public repository)
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.p12
+*.pfx
+credentials.json
+service-account.json
+
+# Local student demo exports (do not commit personal learning data)
+lukulu-drum-pattern.json
+lukulu-academy-daw-project.json
+lukulu-student-demo-backup.json
