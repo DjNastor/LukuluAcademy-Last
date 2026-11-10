@@ -395,7 +395,11 @@ function clearActivePattern(){
 let audio=null,timer=null,tickIndex=0,selectedLesson=null,currentView="overview";
 function msg(text){$("labStatus").textContent=text}
 function saveLearning(){try{localStorage.setItem(LEARN_KEY,JSON.stringify(learn));return true}catch{showStorageWarning();return false}}
-function saveLab(silent=false){try{localStorage.setItem(LAB_KEY,JSON.stringify(lab));if(!silent)msg("Project saved in this browser.");return true}catch{showStorageWarning();if(!silent)msg("Your browser prevented saving. Export a project JSON backup.");return false}}
+function saveLab(silent=false){
+ syncActivePattern();
+ try{localStorage.setItem(LAB_KEY,JSON.stringify(lab));if(!silent)msg("Project saved in this browser.");return true}
+ catch{showStorageWarning();if(!silent)msg("Your browser prevented saving. Export a project JSON backup.");return false}
+}
 function showStorageWarning(){$("workStatus").textContent="Browser storage is blocked. Data may be lost when this page closes."; }
 function completedCount(){return LESSONS.filter(l=>learn[l.id]===true).length}
 function activeSteps(){return lab.pattern.reduce((total,row)=>total+row.filter(Boolean).length,0)}
@@ -432,22 +436,46 @@ function changeView(view,updateHash=true){
  window.scrollTo(0,0);
 }
 function renderRack(){
- const header='<div class="rack-row header"><span>CHANNEL</span>'+Array.from({length:16},(_,i)=>'<span style="text-align:center">'+(i+1)+'</span>').join("")+'</div>';
- $("rackGrid").innerHTML=header+TRACKS.map((name,r)=>'<div class="rack-row"><span class="rack-label">'+name+'</span>'+lab.pattern[r].map((on,i)=>'<button type="button" class="hit'+(on?" on":"")+'" data-drum="'+r+'" data-step="'+i+'" aria-label="'+name+' step '+(i+1)+'" aria-pressed="'+on+'"></button>').join("")+'</div>').join("");
+ $("rackPattern").textContent=lab.activePattern;
+ const header='<div class="rack-row header"><span>CHANNEL</span>'+Array.from({length:16},(_,i)=>'<span style="text-align:center;color:'+(i%4===0?'#c7f2a3':'#8ba88d')+'">'+(i+1)+'</span>').join("")+'</div>';
+ $("rackGrid").innerHTML=header+TRACKS.map((name,r)=>'<div class="rack-row"><span class="rack-label">'+name+'</span>'+lab.pattern[r].map((on,i)=>'<button type="button" class="hit'+(on?" on":"")+'" data-drum="'+r+'" data-step="'+i+'" aria-label="'+name+' in pattern '+lab.activePattern+' step '+(i+1)+'" aria-pressed="'+on+'"></button>').join("")+'</div>').join("");
 }
 function renderPiano(){
- const header='<div class="rack-row header"><span>NOTE</span>'+Array.from({length:16},(_,i)=>'<span style="text-align:center">'+(i+1)+'</span>').join("")+'</div>';
- $("pianoGrid").innerHTML=header+NOTES.map((entry,r)=>'<div class="rack-row"><span class="rack-label">'+entry[0]+'</span>'+lab.melody[r].map((on,i)=>'<button type="button" class="hit notehit'+(on?" on":"")+'" data-note="'+r+'" data-step="'+i+'" aria-label="'+entry[0]+' note step '+(i+1)+'" aria-pressed="'+on+'"></button>').join("")+'</div>').join("");
+ $("pianoPattern").textContent=lab.activePattern;
+ $("pianoGrid").classList.add("piano-timeline");
+ const header='<div class="note-row rack-row header"><span>PIANO KEY</span>'+Array.from({length:16},(_,i)=>'<span style="text-align:center;color:'+(i%4===0?'#b7f2c1':'#92a99a')+'">'+(i+1)+'</span>').join("")+'</div>';
+ $("pianoGrid").innerHTML=header+NOTES.map((entry,r)=>{
+  const black=entry[0].includes("#");
+  return '<div class="note-row"><button type="button" class="key-label'+(black?' black-key':'')+'" data-audition="'+r+'" aria-label="Audition '+entry[0]+'">'+entry[0]+' <span aria-hidden="true">▶</span></button>'+lab.melody[r].map((on,i)=>'<button type="button" class="hit notehit'+(on?" on":"")+'" data-note="'+r+'" data-step="'+i+'" aria-label="'+entry[0]+' pattern '+lab.activePattern+' step '+(i+1)+'" aria-pressed="'+on+'"></button>').join("")+'</div>';
+ }).join("");
+}
+function renderPatternPicker(){
+ $("patternPicker").innerHTML=PATTERN_IDS.map(id=>'<button type="button" data-pattern="'+id+'" aria-pressed="'+(id===lab.activePattern)+'" aria-label="Edit pattern '+id+'">'+id+'</button>').join("");
+ $("patternStatus").textContent="Editing Pattern "+lab.activePattern+" · assign it in Playlist";
 }
 function renderPlaylist(){
- const names=["Intro","Groove","Breakdown","Outro"];
- $("playlist").innerHTML=lab.sections.map((v,i)=>'<div class="arrange-slot"><small>BAR '+(i+1)+'</small><label for="section'+i+'">Section</label><select data-section="'+i+'" id="section'+i+'">'+names.map(n=>'<option value="'+n+'"'+(n===v?" selected":"")+'>'+n+'</option>').join("")+'</select></div>').join("");
+ const selectOptions=v=>SECTION_OPTIONS.map(n=>'<option value="'+n+'"'+(n===v?" selected":"")+'>'+n+'</option>').join("");
+ const header='<div class="play-label">TIMELINE</div>'+Array.from({length:8},(_,i)=>'<div class="play-header">BAR '+String(i+1).padStart(2,"0")+'</div>').join("");
+ const sections='<div class="play-label">Song section</div>'+lab.sections.map((v,i)=>'<select class="play-section" data-section="'+i+'" aria-label="Section for bar '+(i+1)+'">'+selectOptions(v)+'</select>').join("");
+ const row=(lane,label)=>'<div class="play-label"><div>'+label+'<span>'+ (lane==="drums"?"Channel Rack":"Piano Roll")+'</span></div></div>'+lab.clips[lane].map((id,i)=>
+ '<button type="button" class="clip-slot '+(lane==="melody"?"melody ":"")+(id?"active":"empty")+'" data-clip-lane="'+lane+'" data-bar="'+i+'" aria-label="'+label+' bar '+(i+1)+': '+(id?"Pattern "+id:"empty")+'; click to change">'+(id?'<strong>Pattern '+id+'</strong>':'<strong>+</strong>')+'<span>'+(id?"16 steps":"Empty clip")+'</span></button>').join("");
+ $("playlist").innerHTML=header+sections+row("drums","Drums")+row("melody","Melody");
  $("arrangeMode").checked=lab.arrangeMode;
+}
+function cycleClip(lane,bar){
+ if(!["drums","melody"].includes(lane)||!Number.isInteger(bar)||bar<0||bar>=8)return;
+ const options=["",...PATTERN_IDS],curr=options.indexOf(lab.clips[lane][bar]);
+ lab.clips[lane][bar]=options[(curr+1)%options.length];
+ stopAudio();saveLab(true);renderPlaylist();
+ msg((lane==="drums"?"Drums":"Melody")+" bar "+(bar+1)+": "+(lab.clips[lane][bar]||"empty")+" clip.");
 }
 function renderMixer(){
  $("mixer").innerHTML=TRACKS.map((t,i)=>'<div class="mixer"><strong>'+t+'</strong><p>Level <span id="vol'+i+'">'+lab.levels[i]+'</span>%</p><label class="sr-only" for="level'+i+'">'+t+' volume</label><input id="level'+i+'" type="range" min="0" max="100" value="'+lab.levels[i]+'" data-level="'+i+'"><p><button type="button" data-mute="'+i+'" aria-pressed="'+lab.muted[i]+'">'+(lab.muted[i]?"Unmute":"Mute")+'</button></p></div>').join("");
 }
-function renderStudio(){$("tempo").value=lab.tempo;renderRack();renderPiano();renderPlaylist();renderMixer();renderOverview()}
+function renderStudio(){
+ $("tempo").value=lab.tempo;
+ renderPatternPicker();renderRack();renderPiano();renderPlaylist();renderMixer();renderOverview();
+}
 function switchLabTab(name){
  document.querySelectorAll("[data-lab-tab]").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.labTab===name)));
  document.querySelectorAll(".lab-panel").forEach(p=>p.hidden=p.id!=="panel-"+name);
