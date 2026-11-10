@@ -169,6 +169,52 @@ small{color:var(--muted)}
 @media(max-width:880px){.shell{grid-template-columns:1fr}.sidebar{position:static;max-height:none;padding:14px 16px;gap:9px}.brand{margin:0 0 5px}.side-nav{display:flex;overflow:auto}.side-nav button{white-space:nowrap;width:auto;padding:9px 13px}.side-spacer,.side-tip,.side-bottom,.sidebar-caption{display:none}.hero{grid-template-columns:1fr 125px}.progress-dial{width:110px;height:110px}.progress-dial:before{inset:11px}.progress-dial strong{font-size:26px}}
 @media(max-width:600px){.content{padding:20px 14px}.topbar{padding:12px 14px}.breadcrumb{font-size:11px}.demo-pill{display:none}.hero{grid-template-columns:1fr;padding:22px}.hero h1{font-size:31px}.progress-dial{display:none}.stat-grid{grid-template-columns:1fr 1fr}.stat-grid .stat:last-child{grid-column:1/-1}.stat{padding:16px}.stat strong{font-size:26px}.track-grid{grid-template-columns:1fr}.course{grid-template-columns:40px 1fr}.course .mini-action{grid-column:2;justify-self:start}.course-icon{width:40px;height:40px}.lesson-item{grid-template-columns:38px 1fr}.lesson-actions{grid-column:2}.lab-top,.lab-body{padding:17px}.lab-nav{padding-left:9px}.playlist,.mixers{grid-template-columns:repeat(2,minmax(0,1fr))}.heading-row{margin-bottom:14px}.top-actions a{padding:8px 10px}.lesson-detail{padding:16px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+
+
+/* DAW workstation refinement — pattern bank, piano roll and clip playlist */
+.lab-top{background:linear-gradient(116deg,#192d27,#263c2f 55%,#12231d)}
+.lab-top h2{font-weight:820;letter-spacing:-.7px}
+.lab-shell{background:#0d1916;border-color:#385446}
+.transport-pos{padding:10px 12px;background:#101a17;border:1px solid #43664b;color:#c9f2a3;border-radius:9px;font:700 12px/1.1 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:nowrap;letter-spacing:1px}
+.pattern-toolbar{display:flex;gap:13px;align-items:center;flex-wrap:wrap;background:#1b2b22;border-top:1px solid #344838;border-bottom:1px solid #3b5340;padding:12px 22px}
+.pattern-toolbar-label{display:flex;flex-direction:column;gap:4px;margin-right:4px}
+.pattern-toolbar-label strong{font-size:10px;letter-spacing:1.2px;color:#d3e5d3}
+.pattern-toolbar-label small{font-size:11px;color:#96b39c}
+.pattern-picker{display:flex;gap:5px}
+.pattern-picker button{font-size:13px;font-weight:850;border:1px solid #58735a;border-radius:8px;background:#263d2d;color:#b4cbb4;width:38px;height:36px}
+.pattern-picker button[aria-pressed="true"]{background:#c8f47e;color:#193420;border-color:#c8f47e;box-shadow:0 0 0 2px #b8eb7230}
+.pattern-tool{font-weight:760;background:#2b4331;border:1px solid #57745a;color:#e3f1da;border-radius:8px;padding:9px 11px;font-size:11px}
+.pattern-help{margin-left:auto;font-size:11px;color:#a8c8aa}
+.mini-hint{font:700 11px/1.3 ui-monospace,SFMono-Regular,monospace;color:#b7e78c;background:#274c36;padding:4px 7px;border-radius:7px;vertical-align:middle}
+.lab-body{background:#0e1b17}
+.timeline{background:repeating-linear-gradient(90deg,#111f18 0px,#111f18 146px,#14241b 146px,#14241b 294px);border-color:#3c5543}
+.rack-row{gap:4px;grid-template-columns:130px repeat(16,34px);margin:6px 0}
+.rack-row.header{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.hit{width:34px;height:31px;border-radius:4px;background:#22372b;border-color:#3d5843}
+.rack-row .hit:nth-of-type(4n+2){border-left:2px solid #567f57}
+.hit.on{background:#b6ee7a;box-shadow:inset 0 -5px #86b450}
+.hit.notehit.on{background:#80d6b5;box-shadow:inset 0 -5px #53a989}
+.hit.playing{outline:2px solid #e6af45}
+.key-label{border:0;border-radius:4px;background:#e1e6d6;color:#213525;display:flex;gap:6px;align-items:center;justify-content:space-between;padding:0 10px;height:31px;font-size:12px;font-weight:850;min-width:130px}
+.key-label.black-key{background:#26362e;color:#e8ede4;border:1px solid #4b5d4b}
+.note-row{display:grid;grid-template-columns:130px repeat(16,34px);gap:4px;margin:3px 0;width:max-content;align-items:center}
+.piano-timeline{border-left:4px solid #7bb06c}
+.playlist-scroll{overflow-x:auto;border:1px solid #405b47;border-radius:13px;background:#10231a}
+.playlist{display:grid;grid-template-columns:125px repeat(8, minmax(95px,1fr));gap:5px;min-width:900px;padding:12px}
+.play-header{font:800 11px ui-monospace,SFMono-Regular,monospace;color:#b6c4b6;text-align:center;padding:12px 0}
+.play-label{color:#b0c9af;font-size:12px;font-weight:800;display:flex;align-items:center;padding:8px}
+.play-label span{display:block;font-weight:500;font-size:10px;color:#86a08a}
+.play-section{border:1px solid #355941;background:#18362a;border-radius:7px;color:#deeddb;padding:8px 4px;min-width:0;font-size:11px;width:100%}
+.clip-slot{border:1px dashed #456047;background:#172b20;color:#718b78;border-radius:8px;min-width:0;min-height:56px;padding:8px;text-align:left;font-size:11px;display:flex;flex-direction:column;justify-content:space-between}
+.clip-slot.active{border:1px solid #7dba66;color:#e2f3dc;background:#31553a}
+.clip-slot.melody.active{border-color:#6cbba8;background:#205144}
+.clip-slot strong{font:900 15px ui-monospace,Menlo,monospace}
+.clip-slot span{font-size:9px;letter-spacing:.6px;opacity:.85}
+.clip-slot.playhead{outline:2px solid #f6c768;outline-offset:1px}
+.arrange-hint{font-size:12px;color:#a0b5a3;margin:15px 0 0}
+.lab-nav button[aria-selected="true"]{color:#d6fda2;background:#ffffff08}
+@media(max-width:600px){.pattern-toolbar{padding:12px 15px;gap:9px}.pattern-toolbar-label{width:100%}.pattern-help{margin-left:0;width:100%}.transport-pos{order:5}.rack-row{grid-template-columns:113px repeat(16,32px)}.note-row{grid-template-columns:113px repeat(16,32px)}.key-label{min-width:113px}.hit{width:32px}.lab-top{gap:14px}}
+
 </style>
 </head>
 <body>
@@ -221,21 +267,22 @@ small{color:var(--muted)}
  <div class="heading-row"><div><div class="eyebrow">Practice studio / version 0.2</div><h1>Lukulu DAW Lab</h1><p>A beginner-friendly music workstation with drums, piano-roll practice, song sections and basic mixing. It is not FL Studio itself.</p></div></div>
  <div class="lab-shell">
   <div class="lab-top"><div><div class="eyebrow">Beat-making workspace</div><h2>My first track <small style="color:#91ae97;font-weight:400;font-size:12px">● browser project</small></h2><p>Tap steps to create your beat. Use headphones at a comfortable volume.</p></div>
-   <div class="lab-controls"><label for="tempo">BPM</label><input id="tempo" type="number" min="60" max="180" step="1" value="110"><button id="play" class="primary">▶ Play</button><button id="stop" class="outline">■ Stop</button></div>
+   <div class="lab-controls"><span class="transport-pos" id="transportPosition" aria-live="off">BAR 01 : STEP 01</span><label for="tempo">BPM</label><input id="tempo" type="number" min="60" max="180" step="1" value="110"><button id="play" class="primary">▶ Play</button><button id="stop" class="outline">■ Stop</button></div>
   </div>
+  <div class="pattern-toolbar" aria-label="Pattern editor controls"><div class="pattern-toolbar-label"><strong>PATTERN SELECTOR</strong><small>Edit one pattern, then arrange clips in the Playlist</small></div><div id="patternPicker" class="pattern-picker" role="group" aria-label="Current pattern"></div><button type="button" id="clonePattern" class="pattern-tool">Duplicate →</button><button type="button" id="emptyPattern" class="pattern-tool">Clear active</button><span class="pattern-help" id="patternStatus" role="status">Pattern A active</span></div>
   <div class="lab-nav" role="tablist" aria-label="DAW lab views"><button id="tab-rack" role="tab" aria-controls="panel-rack" aria-selected="true" data-lab-tab="rack">Channel Rack</button><button id="tab-piano" role="tab" aria-controls="panel-piano" aria-selected="false" data-lab-tab="piano">Piano Roll</button><button id="tab-playlist" role="tab" aria-controls="panel-playlist" aria-selected="false" data-lab-tab="playlist">Playlist</button><button id="tab-mixer" role="tab" aria-controls="panel-mixer" aria-selected="false" data-lab-tab="mixer">Mixer</button></div>
   <div class="lab-body">
     <div class="lab-panel" id="panel-rack" role="tabpanel" aria-labelledby="tab-rack">
-     <div class="lab-subtitle"><div><h3>Channel Rack</h3><p>One bar · 16 steps · Four drum tracks</p></div><div class="tool-row"><button data-preset="afro">Afro House</button><button data-preset="house">Four-on-floor</button><button id="clearDrums">Clear</button></div></div>
+     <div class="lab-subtitle"><div><h3>Channel Rack <span class="mini-hint">Pattern <span id="rackPattern">A</span></span></h3><p>One bar · 16 steps · Four drum tracks</p></div><div class="tool-row"><button data-preset="afro">Afro House</button><button data-preset="house">Four-on-floor</button><button id="clearDrums">Clear</button></div></div>
      <div class="timeline" id="rackGrid" aria-label="Sixteen-step drum sequencer"></div>
     </div>
     <div class="lab-panel" id="panel-piano" role="tabpanel" aria-labelledby="tab-piano" hidden>
-     <div class="lab-subtitle"><div><h3>Piano Roll</h3><p>Eight notes · 16 steps · Tap to create a simple melody</p></div><div class="tool-row"><button id="clearPiano">Clear melody</button></div></div>
+     <div class="lab-subtitle"><div><h3>Piano Roll <span class="mini-hint">Pattern <span id="pianoPattern">A</span></span></h3><p>Chromatic octave C3–C4 · 16 steps per bar · Tap notes to edit</p></div><div class="tool-row"><button id="clearPiano">Clear melody</button></div></div>
      <div class="timeline" id="pianoGrid" aria-label="Simple piano roll"></div>
     </div>
     <div class="lab-panel" id="panel-playlist" role="tabpanel" aria-labelledby="tab-playlist" hidden>
-     <div class="lab-subtitle"><div><h3>Playlist</h3><p>Arrange four bars. Enable arrangement playback, then press Play.</p></div><div class="tool-row"><label><input id="arrangeMode" type="checkbox"> Play arrangement</label></div></div>
-     <div class="playlist" id="playlist"></div><p style="color:#a5bea9;font-size:12px;margin:16px 0 0">Intro: lighter drums · Groove: full pattern · Breakdown: melody and hi-hat · Outro: kick and clap.</p>
+     <div class="lab-subtitle"><div><h3>Playlist <span class="mini-hint">8-bar arrangement</span></h3><p>Assign pattern clips to drum and melody tracks. Click a clip to cycle Empty → A → B → C → D; then enable arrangement playback.</p></div><div class="tool-row"><label><input id="arrangeMode" type="checkbox"> Play arrangement</label></div></div>
+     <div class="playlist-scroll"><div class="playlist" id="playlist" aria-label="Eight-bar pattern arrangement"></div></div><p class="arrange-hint">Pattern clips determine what plays in each bar. Use the section dropdowns as labels for the learning activity; they do not automatically change the music.</p>
     </div>
     <div class="lab-panel" id="panel-mixer" role="tabpanel" aria-labelledby="tab-mixer" hidden>
      <div class="lab-subtitle"><div><h3>Mixer</h3><p>Adjust each drum channel's level or mute it.</p></div></div><div class="mixers" id="mixer"></div>
