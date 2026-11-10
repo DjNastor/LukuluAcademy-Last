@@ -409,7 +409,7 @@ function syncActivePattern(){
 function choosePattern(id){
  if(!PATTERN_IDS.includes(id)||id===lab.activePattern)return;
  stopAudio();syncActivePattern();
- lab.activePattern=id;lab.pattern=deepCopy(lab.patternBank[id].pattern);lab.melody=deepCopy(lab.patternBank[id].melody);lab.noteLengths=deepCopy(lab.patternBank[id].noteLengths);
+ lab.activePattern=id;lab.pattern=deepCopy(lab.patternBank[id].pattern);lab.melody=deepCopy(lab.patternBank[id].melody);lab.noteLengths=deepCopy(lab.patternBank[id].noteLengths);$("playlistPattern").value=id;
  saveLab(true);renderStudio();$("patternStatus").textContent="Pattern "+id+" selected";
 }
 function duplicatePattern(){
@@ -418,7 +418,7 @@ function duplicatePattern(){
  const previous=lab.patternBank[target];
  if((previous.pattern.some(row=>row.some(Boolean))||previous.melody.some(row=>row.some(Boolean)))&&!window.confirm("Replace existing Pattern "+target+" with a copy of Pattern "+lab.activePattern+"?"))return;
  stopAudio();lab.patternBank[target]={pattern:deepCopy(lab.pattern),melody:deepCopy(lab.melody),noteLengths:deepCopy(lab.noteLengths)};
- lab.activePattern=target;lab.pattern=deepCopy(lab.patternBank[target].pattern);lab.melody=deepCopy(lab.patternBank[target].melody);lab.noteLengths=deepCopy(lab.patternBank[target].noteLengths);
+ lab.activePattern=target;lab.pattern=deepCopy(lab.patternBank[target].pattern);lab.melody=deepCopy(lab.patternBank[target].melody);lab.noteLengths=deepCopy(lab.patternBank[target].noteLengths);$("playlistPattern").value=target;
  saveLab(true);renderStudio();$("patternStatus").textContent="Copied to Pattern "+target;
 }
 function clearActivePattern(){
@@ -510,17 +510,44 @@ function renderPlaylist(){
  const header='<div class="play-label">TIMELINE</div>'+Array.from({length:8},(_,i)=>'<div class="play-header">BAR '+String(i+1).padStart(2,"0")+'</div>').join("");
  const sections='<div class="play-label">Song section</div>'+lab.sections.map((v,i)=>'<select class="play-section" data-section="'+i+'" aria-label="Section for bar '+(i+1)+'">'+selectOptions(v)+'</select>').join("");
  const row=(lane,label)=>'<div class="play-label"><div>'+label+'<span>'+ (lane==="drums"?"Channel Rack":"Piano Roll")+'</span></div></div>'+lab.clips[lane].map((id,i)=>
- '<button type="button" class="clip-slot '+(lane==="melody"?"melody ":"")+(id?"active":"empty")+'" data-clip-lane="'+lane+'" data-bar="'+i+'" aria-label="'+label+' bar '+(i+1)+': '+(id?"Pattern "+id:"empty")+'; click to change">'+(id?'<strong>Pattern '+id+'</strong>':'<strong>+</strong>')+'<span>'+(id?"16 steps":"Empty clip")+'</span></button>').join("");
+ '<button type="button" class="clip-slot '+(lane==="melody"?"melody ":"")+(id?"active":"empty")+'" data-clip-lane="'+lane+'" data-bar="'+i+'" aria-label="'+label+' bar '+(i+1)+': '+(id?"Pattern "+id:"empty")+'; activate to edit">'+(id?'<strong>Pattern '+id+'</strong>':'<strong>+</strong>')+'<span>'+(id?"16 steps":"Empty clip")+'</span></button>').join("");
  $("playlist").innerHTML=header+sections+row("drums","Drums")+row("melody","Melody");
  $("arrangeMode").checked=lab.arrangeMode;
 }
 function cycleClip(lane,bar){
  if(!["drums","melody"].includes(lane)||!Number.isInteger(bar)||bar<0||bar>=8)return;
  const options=["",...PATTERN_IDS],curr=options.indexOf(lab.clips[lane][bar]);
- lab.clips[lane][bar]=options[(curr+1)%options.length];
+ writeClip(lane,bar,options[(curr+1)%options.length]);
+}
+function writeClip(lane,bar,id){
+ if(!["drums","melody"].includes(lane)||!Number.isInteger(bar)||bar<0||bar>=8||!(id===""||PATTERN_IDS.includes(id)))return;
+ if(lab.clips[lane][bar]===id)return;
+ lab.clips[lane][bar]=id;
  stopAudio();saveLab(true);renderPlaylist();
  document.querySelector?.('.clip-slot[data-clip-lane="'+lane+'"][data-bar="'+bar+'"]')?.focus();
- msg((lane==="drums"?"Drums":"Melody")+" bar "+(bar+1)+": "+(lab.clips[lane][bar]||"empty")+" clip.");
+ msg((lane==="drums"?"Drums":"Melody")+" bar "+(bar+1)+": "+(id?"Pattern "+id:"empty")+".");
+}
+function applyClipTool(lane,bar){
+ const mode=$("playlistTool").value;
+ if(mode==="cycle")return cycleClip(lane,bar);
+ const value=mode==="erase"?"":PATTERN_IDS.includes($("playlistPattern").value)?$("playlistPattern").value:"A";
+ writeClip(lane,bar,value);
+}
+function duplicateBars(){
+ const changed=["drums","melody"].some(lane=>lab.clips[lane].slice(0,4).some((id,i)=>id!==lab.clips[lane][i+4]))
+   ||lab.sections.slice(0,4).some((label,i)=>label!==lab.sections[i+4]);
+ if(!changed){msg("Bars 5–8 already match bars 1–4.");return}
+ if(!window.confirm("Replace clips and section labels in bars 5–8 with copies of bars 1–4?"))return;
+ stopAudio();
+ ["drums","melody"].forEach(lane=>{for(let i=0;i<4;i++)lab.clips[lane][i+4]=lab.clips[lane][i]});
+ for(let i=0;i<4;i++)lab.sections[i+4]=lab.sections[i];
+ saveLab(true);renderPlaylist();msg("Duplicated the first four bars into bars 5–8.");
+}
+function clearPlaylistClips(){
+ if(!lab.clips.drums.some(Boolean)&&!lab.clips.melody.some(Boolean)){msg("Playlist clips are already empty.");return}
+ if(!window.confirm("Remove all drum and melody clips from the Playlist? Patterns and notes will be kept."))return;
+ stopAudio();lab.clips={drums:Array(8).fill(""),melody:Array(8).fill("")};
+ saveLab(true);renderPlaylist();msg("Playlist clips cleared. Your patterns are still saved.");
 }
 function renderMixer(){
  $("mixer").innerHTML=TRACKS.map((t,i)=>'<div class="mixer"><strong>'+t+'</strong><p>Level <span id="vol'+i+'">'+lab.levels[i]+'</span>%</p><label class="sr-only" for="level'+i+'">'+t+' volume</label><input id="level'+i+'" type="range" min="0" max="100" value="'+lab.levels[i]+'" data-level="'+i+'"><p><button type="button" data-mute="'+i+'" aria-pressed="'+lab.muted[i]+'">'+(lab.muted[i]?"Unmute":"Mute")+'</button></p></div>').join("");
@@ -638,7 +665,7 @@ document.addEventListener("click",e=>{
  const picker=e.target.closest("[data-pattern]");
  if(picker){choosePattern(picker.dataset.pattern);return}
  const clip=e.target.closest("[data-clip-lane]");
- if(clip){cycleClip(clip.dataset.clipLane,Number(clip.dataset.bar));return}
+ if(clip){applyClipTool(clip.dataset.clipLane,Number(clip.dataset.bar));return}
  const audition=e.target.closest("[data-audition]");
  if(audition){auditionNote(Number(audition.dataset.audition));return}
  const go=e.target.closest("[data-go],[data-nav]");
@@ -666,6 +693,8 @@ document.addEventListener("change",e=>{
  if(e.target.id==="arrangeMode"){lab.arrangeMode=e.target.checked;stopAudio();saveLab(true)}
  if(e.target.id==="tempo"){lab.tempo=boundedTempo(e.target.value);e.target.value=lab.tempo;if(timer!==null){stopAudio();msg("Tempo updated. Press Play to restart.")}saveLab(true)}
 });
+$("copyBars").addEventListener("click",duplicateBars);
+$("clearClips").addEventListener("click",clearPlaylistClips);
 $("clonePattern").addEventListener("click",duplicatePattern);
 $("emptyPattern").addEventListener("click",clearActivePattern);
 document.addEventListener("keydown",e=>{
