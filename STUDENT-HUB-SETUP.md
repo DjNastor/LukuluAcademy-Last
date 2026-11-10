@@ -19,6 +19,9 @@ The server verifies the Supabase user and an active, dated entitlement (`academy
 
 The simulator currently declares its audio engine disabled in appConfig. This integration provides the current learning workspace, not an assertion that every DAW control produces audio. Simulator progress remains browser-local. The hub lists subjects and practice prompts; full instructor lesson/video/assignment content has not been populated. No fake course completion or fake successful payments are shown.
 
+## Course catalogue
+`shared/academy-catalog.ts` defines the FL Studio-first production and music-business modules used by the public website and private subject overview. Displayed prices are a working proposal. Enrolment remains server-verified; changing the display catalogue grants no access. The legacy Stripe plan identifiers do not implement the proposed new programme or module purchases.
+
 ## Checks
 Node 24; `npm ci`; `npm run check`; `node scripts/test-student-access.mjs`.
 Use `npx vercel dev` for backend testing. Plain Vite serves frontend previews only.

@@ -17,13 +17,13 @@ export function Footer() {
           <div>
             <h2>Explore</h2>
             <Link to="/#courses">Academy courses</Link>
-            <Link to="/#services">All services</Link>
+            <Link to="/#pricing">Course pricing</Link>
             <Link to="/#how">How learning works</Link>
             <Link to="/student/login">Student login</Link>
           </div>
           <div>
             <h2>Make contact</h2>
-            <Link to="/enquire"><MailIcon aria-hidden="true" /> Structured enquiry</Link>
+            <Link to="/#apply"><MailIcon aria-hidden="true" /> Enrolment help</Link>
             <Link to="/enquire?category=accounts&service=receipt-invoice"><FileTextIcon aria-hidden="true" /> Request an invoice</Link>
             <a href="tel:+27730933554"><PhoneIcon aria-hidden="true" /> +27 73 093 3554</a>
             <span><MapPinIcon aria-hidden="true" /> South Africa</span>
@@ -32,7 +32,7 @@ export function Footer() {
 
         <div className="footer-bottom">
           <p>© 2026 Lukulu Academy & Recordings. All rights reserved.</p>
-          <p><LockKeyholeIcon aria-hidden="true" /> Payments are secured by Stripe’s hosted checkout.</p>
+          <p><LockKeyholeIcon aria-hidden="true" /> Course fees and access are confirmed before payment.</p>
         </div>
       </div>
     </footer>

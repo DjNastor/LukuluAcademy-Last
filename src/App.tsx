@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { CheckoutNotice } from './components/CheckoutNotice';
 import { Navbar } from './components/Navbar';
-import { EnquiryPage } from './pages/EnquiryPage';
 import { HomePage } from './pages/HomePage';
 
 import { NotFoundPage } from './pages/NotFoundPage';
@@ -30,7 +29,8 @@ function RouteFocus() {
 
 function ApplicationRoutes() {
   const location = useLocation();
-  if (location.pathname === "/") return <HomePage />;
+  if (location.pathname === '/') return <><RouteFocus /><HomePage /></>;
+  if (location.pathname === '/enquire') return <Navigate to="/#apply" replace />;
   return (
     <div className={`min-h-screen bg-bg text-white font-body ${location.pathname.startsWith('/student') ? 'student-layout' : ''}`}>
       <a className="skip-link" href="#main-content">
@@ -43,7 +43,6 @@ function ApplicationRoutes() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/news" element={<Navigate to="/" replace />} />
-          <Route path="/enquire" element={<EnquiryPage />} />
           <Route path="/student/login" element={<StudentLoginPage />} />
           <Route path="/student" element={<StudentDashboardPage />} />
           <Route path="/student/demo" element={<StudentDashboardPage demoMode />} />

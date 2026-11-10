@@ -5,8 +5,8 @@ import { Link, useLocation } from 'react-router';
 
 const NAV_LINKS = [
   { label: 'Courses', to: '/#courses', section: 'learn' },
-  { label: 'Services', to: '/#services', section: 'services' },
-  { label: 'Enquire', to: '/enquire', section: 'enquire' },
+  { label: 'How it works', to: '/#how', section: 'services' },
+  { label: 'Apply', to: '/#apply', section: 'enquire' },
   { label: 'Student portal', to: '/student/login', section: 'student', icon: LogInIcon },
 ];
 

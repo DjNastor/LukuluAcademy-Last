@@ -7,6 +7,7 @@ Development workspace for the public Academy website, protected student hub and 
 Use Node 24. Run `npm run setup`, then `npm run dev` for the website preview. Run `npm run check` and `npm run test:student` before review. `npm run build` rebuilds the simulator from `apps/simulator`, bundles it privately with the lab function, then builds the website. `npm run preview` previews the public frontend; use Vercel's local development server for API routes.
 
 - `/`: latest supplied white consolidated Academy design, two course areas, simplified application review and WhatsApp draft.
+- `/enquire`: redirects to the single Academy application at `/#apply`.
 - `/student/login`: email sign-in for existing enrolled students.
 - `/student`: green student hub with subject overview and a protected learning lab.
 - `/student/demo`: currently redirects to login. A separate sample-data demo is still to be built; production authentication is never bypassed.
@@ -14,11 +15,13 @@ Use Node 24. Run `npm run setup`, then `npm run dev` for the website preview. Ru
 
 ## Before publication
 
-Pricing is provisional and must be confirmed before publication. The imported design still contains the earlier monthly options and software choices. New course duration, software scope and modular pricing need one agreed catalogue before connecting payments. No deployment or live payment is performed by this consolidation.
+Pricing is provisional and must be confirmed before publication. The website uses the supplied FL Studio-first proposal: eight modules, R3,000 for 90-day full access and a suggested 12-week path. Separate module totals are R2,000 for Music Production and R1,700 for Music Business. The shared module catalogue in `shared/academy-catalog.ts` drives the website and student subject overview. Prices are enquiry information only; no wallet or purchase unlock is implemented. Existing Stripe plan identifiers are legacy compatibility and must not be used to sell the new programme without a reviewed backend migration. No deployment or live payment is performed by this consolidation.
 
 Configure Supabase, apply migrations and provision enrolled accounts as described in [STUDENT-HUB-SETUP.md](STUDENT-HUB-SETUP.md). Do not commit secrets, student records or payment credentials. Environment examples contain variable names only. Public metadata currently refers to the existing Academy domain; update it when a destination for this project is agreed.
 
 The lab is a learning simulator. Its audio engine is disabled upstream, progress is browser-local, and full instructor videos, cloud progress and daily quizzes are not implemented here. No completed lessons or payment successes are fabricated.
+
+Browser visual QA is blocked by the current preview connection failure. See [design-qa.md](design-qa.md). Build success does not establish visual or live login verification.
 
 ## Import audit
 

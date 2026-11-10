@@ -1,15 +1,14 @@
 import React from 'react';
 import './academy-website.css';
+import { academyModules, academyProgramme, formatRand, trackTotal } from '../../shared/academy-catalog';
 
 export function AcademyWebsite() {
-    const [course, setCourse] = React.useState('Music Production');
-    const [software, setSoftware] = React.useState('FL Studio');
-    const [studio, setStudio] = React.useState('No preference');
+    const [course, setCourse] = React.useState(academyProgramme.name);
     const [name, setName] = React.useState('');
     const [email, setEmail] = React.useState('');
     const [goal, setGoal] = React.useState('');
     const [status, setStatus] = React.useState('');
-    const [selectedPlan, setSelectedPlan] = React.useState('Help me choose');
+    const [moduleInterest, setModuleInterest] = React.useState('P1');
     const [reviewing, setReviewing] = React.useState(false);
     const [audioStatus, setAudioStatus] = React.useState('');
     const menuRef = React.useRef(null);
@@ -25,7 +24,10 @@ export function AcademyWebsite() {
         menuRef.current.open = false;
         menuRef.current.querySelector('summary')?.focus();
     } } document.addEventListener('keydown', escape); return () => document.removeEventListener('keydown', escape); }, []);
-    function draft() { return `Hello Lukulu Academy, I would like to apply.\nName: ${name.trim()}\nEmail: ${email.trim()}\nCourse: ${course}\nPlan enquiry: ${selectedPlan}\n${course === 'Music Production' ? `Software: ${software}\nStudio preference: ${studio}\n` : ''}Learning goal: ${goal.trim() || 'Please help me choose a starting point.'}`; }
+    function draft() {
+        const module = academyModules.find(item => item.id === moduleInterest);
+        return `Hello Lukulu Academy, I would like to enquire about enrolment.\nName: ${name.trim()}\nEmail: ${email.trim()}\nCourse: ${course}\n${course === 'Individual module' ? `Module: ${module.id} · ${module.name}\n` : ''}Software for production: FL Studio\nLearning goal: ${goal.trim() || 'Please help me choose a starting point.'}\nPlease confirm fees, access and the next steps.`;
+    }
     function submit(event) { event.preventDefault(); setReviewing(true); setStatus('Review your application below. Nothing has been sent.'); }
     function downloadDraft() { const blob = new Blob([draft()], { type: 'text/plain;charset=utf-8' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'Lukulu-Academy-Application.txt'; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); setStatus('Application downloaded to your device. Nothing has been sent.'); }
     async function copy() { if (!formRef.current?.reportValidity())
@@ -66,8 +68,13 @@ export function AcademyWebsite() {
     catch {
         setAudioStatus('Audio preview is unavailable in this browser. Please try opening this file in Chrome or another browser.');
     } }
-    const subjects = ['Production foundations', 'Drums, rhythm & beat making', 'Chords, melody & bass', 'Recording, sampling & sound design', 'Arrangement & automation', 'Mixing, mastering & exporting'];
-    const business = ['Music industry foundations', 'Copyright, ownership & split sheets', 'Royalties & registrations', 'Metadata & distribution', 'Beat licensing & agreements', 'Release planning & promotion'];
+    const subjects = academyModules.filter(item => item.track === 'production').map(item => item.name);
+    const business = academyModules.filter(item => item.track === 'business').map(item => item.name);
+    const plans = [
+      { name: academyProgramme.name, price: formatRand(academyProgramme.price), period: ' / 90 days', desc: 'Music Production in FL Studio + Music Business.', features: ['8 modules across both courses', 'Suggested 12-week learning path', 'Remote, self-paced study'], cta: 'Enquire about full access', featured: true },
+      { name: 'Music Production', price: formatRand(trackTotal('production')), period: ' / 4 modules', desc: 'Focus on creating and finishing music in FL Studio.', features: ['FL Studio essentials', 'Drums, melody and arrangement', 'Mixing and export'], cta: 'Enquire about production' },
+      { name: 'Music Business', price: formatRand(trackTotal('business')), period: ' / 4 modules', desc: 'Understand your rights and build your release plan.', features: ['Copyright and royalties', 'Distribution and marketing', 'Artist business and release planning'], cta: 'Enquire about business' },
+    ];
     return React.createElement("div", { className: "lc-app" },
         React.createElement("a", { href: "#main-content", className: "lc-skip" }, "Skip to content"),
         React.createElement("div", { className: "lc-top" }, "SOUTH AFRICAN ROOTS. LEARNING WITHOUT BORDERS."),
@@ -126,11 +133,10 @@ export function AcademyWebsite() {
                             React.createElement("span", { className: "lc-kicker" }, "CREATE YOUR SOUND"),
                             React.createElement("span", { className: "lc-number" }, "01")),
                         React.createElement("h3", null, "Music Production"),
-                        React.createElement("p", null, "From a first beat to a finished track. Learn the core skills through your preferred software, with an approach rooted in Afro House culture."),
-                        React.createElement("label", { className: "lc-label" },
-                            "Choose your software",
-                            React.createElement("select", { value: software, onChange: e => setSoftware(e.target.value) }, ['FL Studio', 'Cubase', 'Reason', 'Not sure yet'].map(x => React.createElement("option", { key: x }, x)))),
-                        React.createElement("p", { className: "lc-small" }, "FL Studio \u00B7 Cubase \u00B7 Reason. Same foundations, different tools."),
+                        React.createElement("p", null, "From a first beat to a finished track. Start with FL Studio, with practical exercises rooted in Afro House culture."),
+                        React.createElement("div", { className: "lc-callout" },
+                            React.createElement("span", { className: "lc-kicker" }, "FL STUDIO FIRST"),
+                            React.createElement("p", null, "One workflow, from your first groove to your final export. FL Studio software is purchased separately.")),
                         React.createElement("details", { className: "lc-subjects" },
                             React.createElement("summary", null,
                                 "Explore the subjects ",
@@ -158,21 +164,7 @@ export function AcademyWebsite() {
                         React.createElement("div", { className: "lc-outcome" },
                             React.createElement("span", { className: "lc-kicker" }, "WORK TOWARDS"),
                             React.createElement("p", null, "Clear credits, organised metadata and a practical release plan.")),
-                        React.createElement("button", { className: "lc-button lc-button-outline", onClick: () => choose('Music Business') }, "Apply for Music Business \u2197"))),
-                React.createElement("details", { className: "lc-studios" },
-                    React.createElement("summary", null,
-                        "Prefer a production workflow? Explore Eiffel & Apple Studio ",
-                        React.createElement("span", null, "+")),
-                    React.createElement("div", { className: "lc-studio-grid" },
-                        React.createElement("div", null,
-                            React.createElement("span", { className: "lc-pill" }, "EIFFEL STUDIO"),
-                            React.createElement("h3", null, "Rhythm. Texture. Groove."),
-                            React.createElement("p", null, "Explore the production approach built around FL Studio, Cubase and Reason.")),
-                        React.createElement("div", null,
-                            React.createElement("span", { className: "lc-pill" }, "APPLE STUDIO"),
-                            React.createElement("h3", null, "Melody. Vocals. Polish."),
-                            React.createElement("p", null, "A Logic Pro and GarageBand workflow preference. Ask about availability when applying."))),
-                    React.createElement("p", { className: "lc-small" }, "Studio preferences are optional. Your course, requirements and available support are confirmed before enrolment."))),
+                        React.createElement("button", { className: "lc-button lc-button-outline", onClick: () => choose('Music Business') }, "Apply for Music Business \u2197")))),
             React.createElement("section", { id: "how", className: "lc-dark lc-section" },
                 React.createElement("div", { className: "lc-shell" },
                     React.createElement("header", { className: "lc-section-head" },
@@ -182,7 +174,7 @@ export function AcademyWebsite() {
                             React.createElement("br", null),
                             "YOUR PACE."),
                         React.createElement("p", null, "A simple start, clear resources and room to practise in your own time.")),
-                    React.createElement("div", { className: "lc-how-grid" }, [{ n: '01', title: 'Enrol simply', text: 'Choose your course and send a short application. We confirm your fees, access and next steps.' }, { n: '02', title: 'Bring the essentials', text: 'An email address and internet access. Read notes on your phone; use a computer, headphones and your chosen software for production exercises.' }, { n: '03', title: 'Learn around your life', text: 'Study remotely around work and home. Revisit notes, check your understanding and practise one subject at a time.' }].map(x => React.createElement("article", { key: x.n },
+                    React.createElement("div", { className: "lc-how-grid" }, [{ n: '01', title: 'Enrol simply', text: 'Choose your course and send a short application. We confirm your fees, access and next steps.' }, { n: '02', title: 'Bring the essentials', text: 'An email address, internet access, a computer and headphones. Read notes on your phone; use FL Studio for production exercises.' }, { n: '03', title: 'Learn around your life', text: 'Study remotely around work and home. Revisit notes, check your understanding and practise one subject at a time.' }].map(x => React.createElement("article", { key: x.n },
                         React.createElement("span", { className: "lc-number" }, x.n),
                         React.createElement("h3", null, x.title),
                         React.createElement("p", null, x.text)))),
@@ -193,7 +185,7 @@ export function AcademyWebsite() {
                                 "Hear an idea.",
                                 React.createElement("br", null),
                                 "Try it yourself."),
-                            React.createElement("p", null, "Explore this simple browser sound demo. Our full DAW simulator is in development to support more hands-on practice alongside notes, quizzes and production exercises."),
+                            React.createElement("p", null, "Try a sound below, then use the learning lab in the student hub to practise the workflow. The simulator is a learning tool still in development; it does not replace FL Studio."),
                             React.createElement("span", { className: "lc-status" }, "Full DAW simulator \u00B7 In development")),
                         React.createElement("div", { className: "lc-pads" },
                             React.createElement("p", { className: "lc-kicker" }, "SOUND DEMO \u00B7 TAP TO LISTEN"),
@@ -205,34 +197,35 @@ export function AcademyWebsite() {
                             React.createElement("p", { className: "lc-small", role: "status" }, audioStatus))))),
             React.createElement("section", { id: "pricing", className: "lc-section lc-shell" },
                 React.createElement("header", { className: "lc-section-head" },
-                    React.createElement("p", { className: "lc-kicker" }, "03 / MEMBERSHIP OPTIONS \u00B7 ZAR"),
-                    React.createElement("h2", null,
-                        "START SMALL.",
-                        React.createElement("br", null),
-                        "KEEP GROWING."),
-                    React.createElement("p", null, "Provisional plan guide. Fees, course access and support need confirmation before publication or payment.")),
-                React.createElement("div", { className: "lc-price-grid" }, [{ name: 'Free', price: 'R0', desc: 'Explore introductory learning.', features: ['Course introductions', 'Simple browser sound demo'], cta: 'Ask about previews' }, { name: 'Basic', price: 'R149', desc: 'Build your foundations.', features: ['Beginner learning pathway', 'Learning resources'], cta: 'Ask about Basic' }, { name: 'Pro', price: 'R349', desc: 'Develop your skills further.', features: ['Broader course access', 'Feedback options'], cta: 'Ask about Pro' }, { name: 'VIP', price: 'R999', desc: 'Ask about individual support.', features: ['Mentorship options', 'Personal learning guidance'], cta: 'Ask about VIP' }].map(x => React.createElement("article", { className: 'lc-price ' + (x.name === 'Pro' ? 'lc-price-featured' : ''), key: x.name },
-                    React.createElement("p", { className: "lc-kicker" },
-                        x.name,
-                        x.name === 'Pro' ? ' / GROW YOUR SKILLS' : ''),
-                    React.createElement("h3", null,
-                        x.price,
-                        React.createElement("small", null, x.name === 'Free' ? ' / preview' : ' / month')),
-                    React.createElement("p", null, x.desc),
-                    React.createElement("ul", null, x.features.map(y => React.createElement("li", { key: y }, y))),
-                    React.createElement("button", { className: 'lc-button ' + (x.name === 'Pro' ? 'lc-button-light' : 'lc-button-dark'), onClick: () => { setSelectedPlan(x.name); setReviewing(false); goToApply(); } },
-                        x.cta,
-                        " \u2197")))),
-                React.createElement("p", { className: "lc-small lc-center" }, "Plan guide carried forward from this design. Fees and benefits are subject to confirmation. No payment is taken here.")),
+                    React.createElement("p", { className: "lc-kicker" }, "03 / COURSE OPTIONS · ZAR"),
+                    React.createElement("h2", null, "ONE PROGRAMME.", React.createElement("br", null), "YOUR WAY TO LEARN."),
+                    React.createElement("p", null, "Take both courses over a suggested three months, focus on one course, or start with a single module."),
+                    React.createElement("p", { className: "lc-pricing-note" }, "Proposed pricing · We confirm fees, access and support before you enrol. No payment is taken here.")),
+                React.createElement("div", { className: "lc-price-grid" }, plans.map(plan => React.createElement("article", { className: 'lc-price ' + (plan.featured ? 'lc-price-featured' : ''), key: plan.name },
+                    React.createElement("p", { className: "lc-kicker" }, plan.featured ? 'FULL ACADEMY · BOTH COURSES' : plan.name),
+                    React.createElement("h3", null, plan.price, React.createElement("small", null, plan.period)),
+                    React.createElement("p", null, plan.desc),
+                    React.createElement("ul", null, plan.features.map(feature => React.createElement("li", { key: feature }, feature))),
+                    React.createElement("button", { className: 'lc-button ' + (plan.featured ? 'lc-button-light' : 'lc-button-dark'), onClick: () => choose(plan.name) }, plan.cta)))),
+                React.createElement("p", { className: "lc-small lc-center" }, "The proposed full programme saves R700 compared with buying all eight modules separately. FL Studio licensing is separate."),
+                React.createElement("details", { className: "lc-module-pricing" },
+                    React.createElement("summary", null, "Prefer one module? View the proposed module prices"),
+                    React.createElement("div", { className: "lc-module-list" }, academyModules.map(module => React.createElement("article", { key: module.id },
+                        React.createElement("div", null,
+                            React.createElement("span", { className: "lc-kicker" }, module.id + ' · ' + (module.track === 'production' ? 'FL STUDIO' : 'MUSIC BUSINESS')),
+                            React.createElement("h3", null, module.name),
+                            React.createElement("p", null, module.description)),
+                        React.createElement("button", { className: "lc-button lc-button-outline", onClick: () => { setModuleInterest(module.id); choose('Individual module'); }, 'aria-label': `Enquire about ${module.name}, ${formatRand(module.price)}` }, formatRand(module.price))))),
+                    React.createElement("p", { className: "lc-small" }, "Individual module access and extension policies will be confirmed before payment. The 12-week path is a suggested pace, not a deadline for assignments."))),
             React.createElement("section", { id: "questions", className: "lc-section lc-shell lc-faq" },
                 React.createElement("header", { className: "lc-section-head" },
                     React.createElement("p", { className: "lc-kicker" }, "BEFORE YOU START"),
                     React.createElement("h2", null, "A FEW SIMPLE ANSWERS.")),
                 [
                     ['Do I need experience?', 'You can start with the foundations. Tell us your experience when applying so we can suggest a suitable starting point.'],
-                    ['Can I learn on my phone?', 'Use your phone for reading and reviewing notes. Practical production exercises need computer access, headphones and your chosen software.'],
-                    ['Do I need to choose a studio?', 'No. Eiffel and Apple are optional workflow preferences. Choose your course first; we can help you work out the tools.'],
-                    ['Is the full simulator available?', 'This page includes a small sound demo. The full DAW simulator is still in development.'],
+                    ['Can I learn on my phone?', 'Use your phone for reading and reviewing notes. Practical production exercises need a computer, headphones and FL Studio.'],
+                    ['Which software do I need?', 'We are starting with FL Studio for Music Production. A software licence is separate from course fees. Music Business does not require a DAW.'],
+                    ['How do I use the student hub?', 'Enrol first, then sign in using your student email. Active enrolment is verified before the learning lab opens. The simulator is still in development and some tools are visual only.'],
                     ['Does applying take payment?', 'No. An application starts a conversation. We confirm the course, fees, access and available support before payment.'],
                     ['Can I learn around work?', 'The Academy approach is remote and self-paced. Confirm any scheduled sessions and support times before enrolling.']
                 ].map(([question, answer]) => React.createElement("details", { key: question },
@@ -259,25 +252,13 @@ export function AcademyWebsite() {
                             "Email address",
                             React.createElement("input", { name: "email", maxLength: 254, autoComplete: "email", type: "email", required: true, value: email, onChange: e => setEmail(e.target.value) })),
                         React.createElement("label", { className: "lc-label" },
-                            "Plan enquiry",
-                            React.createElement("select", { value: selectedPlan, onChange: e => { setSelectedPlan(e.target.value); setReviewing(false); } }, ['Help me choose', 'Free', 'Basic', 'Pro', 'VIP'].map(x => React.createElement("option", { key: x }, x)))),
-                        React.createElement("label", { className: "lc-label" },
-                            "Course",
+                            "I am interested in",
                             React.createElement("select", { value: course, onChange: e => setCourse(e.target.value) },
-                                React.createElement("option", null, "Music Production"),
-                                React.createElement("option", null, "Music Business"),
-                                React.createElement("option", null, "Help me choose"))),
-                        course === 'Music Production' && React.createElement("details", { className: "lc-preferences" },
-                            React.createElement("summary", null, "Software & studio preference (optional)"),
-                            React.createElement("label", { className: "lc-label" },
-                                "Software",
-                                React.createElement("select", { value: software, onChange: e => setSoftware(e.target.value) }, ['FL Studio', 'Cubase', 'Reason', 'Logic Pro', 'GarageBand', 'Not sure yet'].map(x => React.createElement("option", { key: x }, x)))),
-                            React.createElement("label", { className: "lc-label" },
-                                "Studio preference",
-                                React.createElement("select", { value: studio, onChange: e => setStudio(e.target.value) },
-                                    React.createElement("option", null, "No preference"),
-                                    React.createElement("option", null, "Eiffel Studio"),
-                                    React.createElement("option", null, "Apple Studio")))),
+                                [academyProgramme.name, 'Music Production', 'Music Business', 'Individual module', 'Help me choose'].map(value => React.createElement("option", { key: value }, value)))),
+                        course === 'Individual module' && React.createElement("label", { className: "lc-label" },
+                            "Module",
+                            React.createElement("select", { value: moduleInterest, onChange: e => setModuleInterest(e.target.value) },
+                                academyModules.map(module => React.createElement("option", { key: module.id, value: module.id }, `${module.id} · ${module.name}`)))),
                         React.createElement("label", { className: "lc-label" },
                             "What would you like to learn? (optional)",
                             React.createElement("textarea", { maxLength: 1500, value: goal, onChange: e => setGoal(e.target.value), placeholder: "Your first beat, finishing a track, understanding royalties\u2026" })),
