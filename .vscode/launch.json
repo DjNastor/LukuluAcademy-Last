@@ -2,26 +2,41 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Attach to Chrome",
-      "port": 9222,
-      "request": "attach",
-      "type": "chrome",
+      "name": "Academy: Launch Website in Chrome",
+      "type": "pwa-chrome",
+      "request": "launch",
+      "url": "http://127.0.0.1:5500/index.html",
       "webRoot": "${workspaceFolder}"
     },
     {
-      "type": "chrome",
-      "request": "launch",
-      "name": "Launch Chrome against localhost",
-      "url": "http://localhost:8080",
+      "name": "Academy: Attach to Chrome",
+      "type": "pwa-chrome",
+      "port": 9222,
+      "request": "attach",
       "webRoot": "${workspaceFolder}"
+    },
+    {
+      "name": "Academy: Debug Express API",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/server.js",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PORT": "3000",
+        "NODE_ENV": "development"
+      },
+      "console": "integratedTerminal",
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
     },
     {
       "name": "C/C++ Runner: Debug Session",
       "type": "lldb",
       "request": "launch",
       "args": [],
-      "cwd": "/Users/mac/Documents 2/Lukulu Tools/Lukulu Academy/LukuluAcademy-Last",
-      "program": "/Users/mac/Documents 2/Lukulu Tools/Lukulu Academy/LukuluAcademy-Last/build/Debug/outDebug"
+      "cwd": "${workspaceFolder}",
+      "program": "${workspaceFolder}/build/Debug/outDebug"
     }
   ]
 }
