@@ -5,63 +5,160 @@
       "label": "Academy: Safe Pull from GitHub",
       "type": "shell",
       "command": "bash",
-      "args": ["${workspaceFolder}/scripts/sync-academy.sh"],
-      "options": {"cwd": "${workspaceFolder}"},
+      "args": [
+        "${workspaceFolder}/scripts/sync-academy.sh"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
       "problemMatcher": [],
-      "presentation": {"reveal": "always", "panel": "shared"}
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
     },
     {
       "label": "Academy: Enable Safe Auto-Pull (Mac)",
       "type": "shell",
       "command": "bash",
-      "args": ["${workspaceFolder}/scripts/enable-autopull-mac.sh"],
-      "options": {"cwd": "${workspaceFolder}"},
+      "args": [
+        "${workspaceFolder}/scripts/enable-autopull-mac.sh"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
       "problemMatcher": [],
-      "presentation": {"reveal": "always"}
+      "presentation": {
+        "reveal": "always"
+      }
     },
     {
       "label": "Academy: Disable Safe Auto-Pull (Mac)",
       "type": "shell",
       "command": "bash",
-      "args": ["${workspaceFolder}/scripts/disable-autopull-mac.sh"],
-      "options": {"cwd": "${workspaceFolder}"},
+      "args": [
+        "${workspaceFolder}/scripts/disable-autopull-mac.sh"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
       "problemMatcher": [],
-      "presentation": {"reveal": "always"}
+      "presentation": {
+        "reveal": "always"
+      }
     },
     {
       "label": "Academy: Check Git Status",
       "type": "shell",
       "command": "git",
-      "args": ["status", "--short", "--branch"],
-      "options": {"cwd": "${workspaceFolder}"},
+      "args": [
+        "status",
+        "--short",
+        "--branch"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
       "problemMatcher": []
     },
     {
       "label": "Academy: Fetch GitHub Updates (no file changes)",
       "type": "shell",
       "command": "git",
-      "args": ["fetch", "origin", "develop"],
-      "options": {"cwd": "${workspaceFolder}"},
+      "args": [
+        "fetch",
+        "origin",
+        "develop"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
       "problemMatcher": []
     },
     {
       "label": "Academy: Preview Website (Python)",
       "type": "shell",
       "command": "python3",
-      "args": ["-m", "http.server", "5500", "--bind", "127.0.0.1"],
-      "options": {"cwd": "${workspaceFolder}"},
+      "args": [
+        "-m",
+        "http.server",
+        "5500",
+        "--bind",
+        "127.0.0.1"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
       "isBackground": true,
       "problemMatcher": [],
-      "presentation": {"reveal": "always", "panel": "dedicated"}
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
     },
     {
       "label": "Academy: Test Student Hub (Node optional)",
       "type": "shell",
       "command": "node",
-      "args": ["tests/student-hub-smoke.cjs"],
-      "options": {"cwd": "${workspaceFolder}"},
+      "args": [
+        "tests/student-hub-smoke.cjs"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
       "problemMatcher": [],
-      "presentation": {"reveal": "always"}
+      "presentation": {
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "Academy: Install API Dependencies (Mac/Node)",
+      "type": "shell",
+      "command": "npm",
+      "args": [
+        "install",
+        "--no-audit",
+        "--no-fund"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "Academy: Run Development API (port 3000)",
+      "type": "shell",
+      "command": "npm",
+      "args": [
+        "start"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "Academy: Test DAW + API",
+      "type": "shell",
+      "command": "npm",
+      "args": [
+        "test"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always"
+      }
     }
   ]
 }
