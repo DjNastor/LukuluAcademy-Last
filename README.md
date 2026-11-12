@@ -15,6 +15,18 @@ This repository is the shared source for changes requested through ChatGPT and r
 
 **Important:** VS Code automatically **fetches** incoming changes, not merges them. Run the **Academy: Safe Pull from GitHub** task after saving and reviewing local edits. The local Mac folder will not update itself until this task is run, or an approved Mac-side sync agent is connected and configured.
 
+## Optional local Express API (new)
+
+The API endpoint is a **placeholder for future development**, not a connected school/student database or production authentication.
+
+1. Use the **Academy: Safe Pull from GitHub** VS Code task after saving local changes and selecting `develop`.
+2. For the optional API, install a **Catalina-compatible Node.js version** and run `npm install` (or VS Code task **Academy: Install API Dependencies (Mac/Node)**) once.
+3. Use `npm start` (or task **Academy: Run Development API (port 3000)**) to start the local-only endpoint at `http://127.0.0.1:3000/api/example`.
+4. Use `npm test` (or task **Academy: Test DAW + API**) to run the existing DAW regressions and the new live HTTP API smoke test.
+5. For website preview, keep using **Academy: Preview Website (Python)** at `http://127.0.0.1:5500/index.html`. The local Express API does **not** host the static Academy pages.
+
+The `.vscode/launch.json` file includes an **Academy: Debug Express API** configuration, plus browser debugging against the Python preview port. No cloud environment, persistent student records or API credentials are configured.
+
 ## Quick start in VS Code on Mac
 
 1. Open the `LukuluAcademy-Last` repository folder in **VS Code**.
