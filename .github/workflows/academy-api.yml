@@ -1,0 +1,40 @@
+name: Academy Express API smoke tests
+
+on:
+  push:
+    branches: [develop]
+    paths:
+      - "server.js"
+      - "controllers/**"
+      - "routes/**"
+      - "package.json"
+      - "tests/api-smoke.cjs"
+      - ".github/workflows/academy-api.yml"
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - "server.js"
+      - "controllers/**"
+      - "routes/**"
+      - "package.json"
+      - "tests/api-smoke.cjs"
+      - ".github/workflows/academy-api.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  api-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Check out Academy develop
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install API dependency
+        run: npm install --no-audit --no-fund
+      - name: Test DAW and API
+        run: npm test
