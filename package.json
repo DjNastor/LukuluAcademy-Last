@@ -1,0 +1,18 @@
+{
+  "name": "lukulu-academy-prototype",
+  "version": "0.4.1",
+  "private": true,
+  "description": "Lukulu Academy demo site, DAW Lab and optional local Express API",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node tests/student-hub-smoke.cjs && node tests/api-smoke.cjs",
+    "test:daw": "node tests/student-hub-smoke.cjs",
+    "test:api": "node tests/api-smoke.cjs"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
