@@ -144,20 +144,20 @@ async function main(){
  test("M02 checklist distinguishes real A-pattern structure from hit count",()=>{
    const blank=api.hydrateLab({pattern:Array.from({length:4},()=>Array(16).fill(false))});
    const criteria=api.rhythmCriteria(blank);
-   assert.deepEqual(criteria.map(c=>c.done),[false,false,false,false]);
+   assert.deepEqual(JSON.parse(JSON.stringify(criteria.map(c=>c.done))),[false,false,false,false]);
    assert.equal(criteria.length,4);
    const kick=blank.patternBank.A.pattern[0];
    const clap=blank.patternBank.A.pattern[1];
    [0,4,8,12].forEach(i=>kick[i]=true);
    [4,12].forEach(i=>clap[i]=true);
    blank.pattern=JSON.parse(JSON.stringify(blank.patternBank.A.pattern));
-   assert.deepEqual(api.rhythmCriteria(blank).map(c=>c.done),[true,true,false,false]);
+   assert.deepEqual(JSON.parse(JSON.stringify(api.rhythmCriteria(blank).map(c=>c.done))),[true,true,false,false]);
    blank.patternBank.B.pattern[0][15]=true;
-   assert.deepEqual(api.rhythmCriteria(blank).map(c=>c.done),[true,true,true,false]);
+   assert.deepEqual(JSON.parse(JSON.stringify(api.rhythmCriteria(blank).map(c=>c.done))),[true,true,true,false]);
    blank.clips.drums[3]="B";
-   assert.deepEqual(api.rhythmCriteria(blank).map(c=>c.done),[true,true,true,true]);
+   assert.deepEqual(JSON.parse(JSON.stringify(api.rhythmCriteria(blank).map(c=>c.done))),[true,true,true,true]);
    blank.patternBank.B.pattern=JSON.parse(JSON.stringify(blank.patternBank.A.pattern));
-   assert.deepEqual(api.rhythmCriteria(blank).map(c=>c.done),[true,true,false,false]);
+   assert.deepEqual(JSON.parse(JSON.stringify(api.rhythmCriteria(blank).map(c=>c.done))),[true,true,false,false]);
  });
  test("M02 checklist updates accessible student guidance",()=>{
    const n=api.renderRhythmChecklist();
