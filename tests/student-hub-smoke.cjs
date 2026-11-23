@@ -50,7 +50,7 @@ const window={AudioContext:FakeAudioContext,addEventListener(){},scrollTo(){},co
 const history={replaceState(){}},location={hash:""};
 const context=vm.createContext({window,document,localStorage,history,location,console,Blob,URL,
   setInterval:()=>42,clearInterval:()=>{}});
-vm.runInContext(script+"\n;globalThis.__test={getLab:()=>lab,getLearn:()=>learn,activeSteps,choosePattern,duplicatePattern,cycleClip,hydrateLab,saveLab,playAudio,stopAudio,tick,renderPlaylist,completeLesson,validMatrix,setPianoNote,renderPiano,applyClipTool,duplicateBars,clearPlaylistClips,reconcileLengths};",context,{
+vm.runInContext(script+"\n;globalThis.__test={getLab:()=>lab,getLearn:()=>learn,activeSteps,choosePattern,duplicatePattern,cycleClip,hydrateLab,saveLab,playAudio,stopAudio,tick,renderPlaylist,completeLesson,rhythmCriteria,renderRhythmChecklist,validMatrix,setPianoNote,renderPiano,applyClipTool,duplicateBars,clearPlaylistClips,reconcileLengths};",context,{
   filename:"student-hub.html",timeout:5000
 });
 const api=context.__test;
@@ -140,6 +140,30 @@ async function main(){
    assert.equal(api.getLab().clips.drums[4],api.getLab().clips.drums[0]);
    assert.equal(api.getLab().clips.melody[5],api.getLab().clips.melody[1]);
    assert.equal(api.getLab().sections[4],"Breakdown");
+ });
+ test("M02 checklist distinguishes real A-pattern structure from hit count",()=>{
+   const blank=api.hydrateLab({pattern:Array.from({length:4},()=>Array(16).fill(false))});
+   const criteria=api.rhythmCriteria(blank);
+   assert.deepEqual(criteria.map(c=>c.done),[false,false,false,false]);
+   assert.equal(criteria.length,4);
+   const kick=blank.patternBank.A.pattern[0];
+   const clap=blank.patternBank.A.pattern[1];
+   [0,4,8,12].forEach(i=>kick[i]=true);
+   [4,12].forEach(i=>clap[i]=true);
+   blank.pattern=JSON.parse(JSON.stringify(blank.patternBank.A.pattern));
+   assert.deepEqual(api.rhythmCriteria(blank).map(c=>c.done),[true,true,false,false]);
+   blank.patternBank.B.pattern[0][15]=true;
+   assert.deepEqual(api.rhythmCriteria(blank).map(c=>c.done),[true,true,true,false]);
+   blank.clips.drums[3]="B";
+   assert.deepEqual(api.rhythmCriteria(blank).map(c=>c.done),[true,true,true,true]);
+   blank.patternBank.B.pattern=JSON.parse(JSON.stringify(blank.patternBank.A.pattern));
+   assert.deepEqual(api.rhythmCriteria(blank).map(c=>c.done),[true,true,false,false]);
+ });
+ test("M02 checklist updates accessible student guidance",()=>{
+   const n=api.renderRhythmChecklist();
+   assert.equal(typeof n,"number");
+   assert.match(el("rhythmChecklistSummary").textContent,/practice steps found/);
+   assert.match(el("rhythmChecklist").innerHTML,/Pattern A:/);
  });
  test("Malformed project is rejected",()=>{
    assert.equal(api.hydrateLab({pattern:[true]}),null);
