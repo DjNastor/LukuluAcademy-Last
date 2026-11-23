@@ -62,6 +62,10 @@ In **Piano Roll**, choose a duration, then click an empty step to draw a note. C
 
 In **Playlist**, choose **Draw**, a pattern A–D, and the desired clip cell to place that pattern directly. **Erase** removes a clip while retaining its source pattern. **Cycle** continues the older empty/A/B/C/D behaviour. The duplicate button copies the first four bars into bars five through eight after confirmation. Project JSON backups are recommended before editing.
 
+### M02 Afro House assignment checklist
+
+The DAW Lab now includes **Check my groove**, a four-point local checklist for Pattern A's kick/clap placement, a changed pattern variation (B–D), and a Playlist arrangement containing both patterns. This is self-practice feedback, **not** teacher marking, export verification or a student submission system. See [M02 practice brief](docs/M02-AFRO-HOUSE-PRACTICE.md).
+
 ### Tests and limitations
 - Run automated structural/state smoke checks with `node tests/student-hub-smoke.cjs` on a machine with compatible Node.js, or let GitHub Actions run the smoke workflow where enabled.
 - Static syntax, simulated pattern/Playlist/playback tests and DOM ID checks have been performed. **Audio quality, visual layout and device behaviour on the MacBook have not been verified.**
