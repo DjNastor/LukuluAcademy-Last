@@ -302,7 +302,15 @@ small{color:var(--muted)}
     <div class="lab-foot"><div class="status" id="labStatus" role="status">Ready. Press Play to hear your pattern.</div><button id="saveLab">Save to browser</button><button id="exportLab">Export project JSON</button><button id="importLab">Import project</button><input id="patternFile" type="file" accept="application/json,.json"></div>
   </div>
  </div>
- <div class="guide"><div class="eyebrow">Lesson M02 · Rhythm &amp; drums</div><h3>Practice challenge: make an Afro House groove</h3><p>Create a drum pattern with at least eight active steps, try the piano roll, and export the project. This is a practice task, not an automatically graded assignment.</p><button class="primary" id="markRhythm">Mark M02 lesson complete</button> <span id="challengeStatus" class="notice"></span></div>
+ <div class="guide"><div class="eyebrow">Lesson M02 · Rhythm &amp; drums</div><h3>Practice challenge: make an Afro House groove</h3><p>Create two variations of a 4/4 beat, arrange your patterns, listen to the result and export your project JSON. This is an educational checklist, <strong>not an automatic grade or a submission</strong>.</p>
+ <div class="card" style="background:#f5faf1;color:#173326;margin:14px 0">
+  <h3>M02 practice checklist</h3>
+  <p id="rhythmChecklistSummary" role="status" aria-live="polite">Open the DAW Lab to check your practice.</p>
+  <ul id="rhythmChecklist" style="padding-left:20px;line-height:1.85"></ul>
+  <p><small>Checks look at the saved patterns and Playlist in this browser. A teacher still needs to listen to the music and review your creative choices. Use <strong>Export project JSON</strong> to keep a copy of your work.</small></p>
+  <button class="outline" id="checkRhythm" type="button">Check my groove</button>
+ </div>
+ <button class="primary" id="markRhythm">Mark M02 lesson complete</button> <span id="challengeStatus" class="notice"></span></div>
 </section>
 <section class="screen" data-screen="work" hidden>
  <div class="heading-row"><div><div class="eyebrow">Your saved practice</div><h1>My work</h1><p>Review and export progress. This preview stores data in your current browser—not a real student account.</p></div></div>
@@ -436,6 +444,32 @@ function saveLab(silent=false){
 function showStorageWarning(){$("workStatus").textContent="Browser storage is blocked. Data may be lost when this page closes."; }
 function completedCount(){return LESSONS.filter(l=>learn[l.id]===true).length}
 function activeSteps(){return lab.pattern.reduce((total,row)=>total+row.filter(Boolean).length,0)}
+/** Local practice checklist: checks edit state only, never grades creativity or tracks exports. */
+function rhythmCriteria(project=lab){
+ const bank=project.patternBank||{};
+ const pattern=project.pattern||[];
+ const rows=id=>id===project.activePattern?pattern:bank[id]?.pattern;
+ const validRows=value=>Array.isArray(value)&&value.length===4&&value.every(row=>Array.isArray(row)&&row.length===16);
+ const a=rows("A"),b=rows("B"),c=rows("C"),d=rows("D");
+ const primary=validRows(a)?a:null;
+ const base=primary||pattern;
+ const kick=validRows(base)&&[0,4,8,12].every(i=>base[0][i]===true);
+ const clap=validRows(base)&&[4,12].every(i=>base[1][i]===true);
+ const second=[["B",b],["C",c],["D",d]].find(([,p])=>validRows(p)&&p.some(row=>row.some(Boolean))&&JSON.stringify(p)!==JSON.stringify(base));
+ const clipReady=Boolean(second&&project.clips&&Array.isArray(project.clips.drums)&&project.clips.drums.includes("A")&&project.clips.drums.includes(second[0]));
+ return [
+  {id:"kick",done:Boolean(kick),label:"Pattern A: kick on beats 1, 2, 3 and 4 (steps 1, 5, 9, 13)"},
+  {id:"clap",done:Boolean(clap),label:"Pattern A: clap on beats 2 and 4 (steps 5 and 13)"},
+  {id:"variation",done:Boolean(second),label:"Create a different drum variation in Pattern B, C or D"},
+  {id:"playlist",done:clipReady,label:"Arrange Pattern A and your variation in the drum Playlist"}
+ ];
+}
+function renderRhythmChecklist(){
+ const checks=rhythmCriteria(),done=checks.filter(c=>c.done).length;
+ $("rhythmChecklistSummary").textContent=done+" of "+checks.length+" practice steps found in your DAW project.";
+ $("rhythmChecklist").innerHTML=checks.map(c=>"<li>"+(c.done?"✓ ":"○ ")+c.label+"</li>").join("");
+ return done;
+}
 function renderOverview(){
  const n=completedCount(),pct=Math.round(100*n/LESSONS.length);
  $("overviewCompleted").textContent=n+" / "+LESSONS.length;
@@ -450,6 +484,7 @@ function renderOverview(){
  $("businessCount").textContent=(learn.B01?"1":"0")+" of 1 complete";
  $("savedSummary").textContent=n+" of 4 demo lessons completed. Quiz: "+(Number.isInteger(learn.quiz)?learn.quiz+"/2":"not submitted")+". Drum pattern: "+activeSteps()+" active steps.";
  $("challengeStatus").textContent=activeSteps()>=8?"Your drum pattern has at least eight active steps.":"Add at least eight drum steps to try this challenge.";
+ renderRhythmChecklist();
 }
 function renderLessons(){
  $("lessonList").innerHTML=LESSONS.map(l=>'<div class="lesson-item"><div class="lesson-number">'+l.id+'</div><div><h3>'+l.title+'</h3><p>'+l.description+'</p></div><div class="lesson-actions">'+(learn[l.id]?'<span class="done">✓ Done</span>':'')+'<button class="mini-action" data-lesson="'+l.id+'">Open lesson</button></div></div>').join("");
@@ -721,6 +756,7 @@ $("quizForm").addEventListener("submit",e=>{
  learn.quiz=Number(data.get("q1")==="yes")+Number(data.get("q2")==="yes");
  saveLearning();renderOverview();$("quizResult").textContent="You scored "+learn.quiz+" out of 2. "+(learn.quiz===2?"Great work!":"Review the lessons and try again.");
 });
+$("checkRhythm").addEventListener("click",()=>{renderRhythmChecklist();$("challengeStatus").textContent="Checklist refreshed. Save or export your project when ready.";});
 $("markRhythm").addEventListener("click",()=>{if(activeSteps()<8){msg("Add at least eight drum steps to finish the practice activity.");changeView("lab");switchLabTab("rack");return}completeLesson("M02");renderOverview();$("challengeStatus").textContent="M02 complete. Your demo progress was updated.";});
 $("exportProgress").addEventListener("click",()=>{downloadJSON("lukulu-student-demo-backup.json",{format:"lukulu-academy-student-backup-v1",learning:learn,lab});$("workStatus").textContent="Demo backup exported."});
 $("resetDemo").addEventListener("click",resetDemo);
