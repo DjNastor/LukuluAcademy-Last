@@ -25,7 +25,7 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v4
       - name: Check shell scripts
-        run: bash -n scripts/sync-academy.sh scripts/enable-autopull-mac.sh scripts/disable-autopull-mac.sh
+        run: bash -n scripts/check-academy-sync.sh scripts/sync-academy.sh scripts/enable-autopull-mac.sh scripts/disable-autopull-mac.sh
       - name: Validate VS Code task and settings JSON
         run: |
           python3 -m json.tool .vscode/tasks.json > /dev/null
